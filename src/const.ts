@@ -9,12 +9,6 @@ export const endElementRegexp = /^<\/([-A-Za-z0-9_]+)[^>]*>/;
 export const attributeRegexp =
   /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
 
-// 自闭合标签汇总
-export const selfClosingMap =
-  "area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr".split(
-    ","
-  );
-
 // 解码正则数组
 export const decodeRegexp: [RegExp, string][] = [
   // 去除多余元素
@@ -179,3 +173,5 @@ export const decodeRegexp: [RegExp, string][] = [
   [/\r\n/g, ""],
   [/\n/g, ""],
 ];
+
+

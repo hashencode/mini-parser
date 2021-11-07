@@ -21,16 +21,6 @@ export default class MiniParser {
     return htmlStr;
   }
 
-  // 转换html5标签为微信小程序标签
-  transName(name: string) {
-    switch (name) {
-      case "img":
-        return "image";
-      default:
-        return "view";
-    }
-  }
-
   // 将属性字符串转为对象
   formatAttributes(str: string) {
     let attrsMap: { [key: string]: string } = {};
@@ -49,12 +39,12 @@ export default class MiniParser {
 
   // 解析html字符串并转为json结构
   htmlToJson(decodedHtml: string) {
-    let { transName, formatAttributes } = this;
-    const skeleton = [];
+    let {  formatAttributes } = this;
+    const jsonData = [];
     const maxTime = Date.now() + 1000;
 
     while (decodedHtml) {
-      // 如果是闭合标签
+      // 如果是结束标签
       if (decodedHtml.indexOf("</") === 0) {
         const match = decodedHtml.match(endElementRegexp);
         if (!match) continue;
@@ -62,19 +52,20 @@ export default class MiniParser {
         // 去掉当前解析的字符
         decodedHtml = decodedHtml.substring(str.length);
         // 将当前数据追加到数组
-        skeleton.push({ type: "end", name: transName(name) });
+        jsonData.push({ type: "end", name });
         continue;
       }
 
-      // 如果是开头标签
+      // 如果是起始标签
       if (decodedHtml.indexOf("<") === 0) {
         const match = decodedHtml.match(startElementRegexp);
         if (!match) continue;
+        // 如果是起始标签，需要额外考虑属性
         const [str, name, attrs = ""] = match;
         decodedHtml = decodedHtml.substring(str.length);
-        skeleton.push({
+        jsonData.push({
           type: "start",
-          name: transName(name),
+          name,
           attrs: formatAttributes(attrs),
         });
         continue;
@@ -85,16 +76,16 @@ export default class MiniParser {
       const isExist = index < 0;
       const text = isExist ? decodedHtml : decodedHtml.substring(0, index);
       decodedHtml = isExist ? "" : decodedHtml.substring(index);
-      skeleton.push({ type: "text", name: "text", text });
+      jsonData.push({ type: "text", name: "text", text });
 
       // 防止超时阻碍进程
       if (Date.now() >= maxTime) break;
     }
 
-    return skeleton;
+    return jsonData;
   }
 
-  jsonToSkeleton(jsonData) {
+  jsonToSkeleton(jsonData:any[]) {
     console.log(jsonData);
   }
 }
