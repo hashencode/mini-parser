@@ -3,6 +3,8 @@ import {
   decodeRegexp,
   startElementRegexp,
   attributeRegexp,
+  selfClosingRegexp,
+  selfClosingElementsMap,
 } from "./const";
 
 export default class MiniParser {
@@ -39,7 +41,7 @@ export default class MiniParser {
 
   // 解析html字符串并转为json结构
   htmlToJson(decodedHtml: string) {
-    let {  formatAttributes } = this;
+    let { formatAttributes } = this;
     const jsonData = [];
     const maxTime = Date.now() + 1000;
 
@@ -63,8 +65,11 @@ export default class MiniParser {
         // 如果是起始标签，需要额外考虑属性
         const [str, name, attrs = ""] = match;
         decodedHtml = decodedHtml.substring(str.length);
+        // 判断是否是自闭合标签
+        const selfClosing =
+          selfClosingRegexp.test(str) || selfClosingElementsMap.includes(name);
         jsonData.push({
-          type: "start",
+          type: selfClosing ? "selfClosing" : "start",
           name,
           attrs: formatAttributes(attrs),
         });
@@ -76,7 +81,11 @@ export default class MiniParser {
       const isExist = index < 0;
       const text = isExist ? decodedHtml : decodedHtml.substring(0, index);
       decodedHtml = isExist ? "" : decodedHtml.substring(index);
-      jsonData.push({ type: "text", name: "text", text });
+      jsonData.push({
+        type: "text",
+        name: "text",
+        text: text.trim(),
+      });
 
       // 防止超时阻碍进程
       if (Date.now() >= maxTime) break;
@@ -85,7 +94,30 @@ export default class MiniParser {
     return jsonData;
   }
 
-  jsonToSkeleton(jsonData:any[]) {
+  // 结构数据生成器
+  // skeletonGenerator(jsonData: any[]) {}
+
+  // json数据转结构数据
+  jsonToSkeleton(jsonData: any[]) {
+    const keyMap: number[] = [];
+
+    // 对起始和闭合标签进行标注，便于梳理结构
+    jsonData.forEach((item, index) => {
+      console.log(item);
+      const { type, selfClosing } = item;
+      switch (type) {
+        case "start":
+          item["genKey"] = index;
+          keyMap.push(index);
+          break;
+        case "end":
+          const startKey = keyMap.splice(keyMap.length - 1, 1)[0];
+          console.log();
+          item["genKey"] = startKey;
+          break;
+      }
+    });
     console.log(jsonData);
+    console.log(keyMap);
   }
 }

@@ -5,6 +5,13 @@ export const startElementRegexp =
 // 结束标签正则
 export const endElementRegexp = /^<\/([-A-Za-z0-9_]+)[^>]*>/;
 
+// 自闭合标签匹配正则
+export const selfClosingRegexp =
+  /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\/>/;
+const selfClosingElements =
+  "area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr";
+export const selfClosingElementsMap = selfClosingElements.split(",");
+
 // 获取属性正则
 export const attributeRegexp =
   /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
@@ -173,5 +180,3 @@ export const decodeRegexp: [RegExp, string][] = [
   [/\r\n/g, ""],
   [/\n/g, ""],
 ];
-
-

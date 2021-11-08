@@ -4,6 +4,10 @@
 const startElementRegexp = /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/;
 // 结束标签正则
 const endElementRegexp = /^<\/([-A-Za-z0-9_]+)[^>]*>/;
+// 自闭合标签匹配正则
+const selfClosingRegexp = /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\/>/;
+const selfClosingElements = "area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr";
+const selfClosingElementsMap = selfClosingElements.split(",");
 // 获取属性正则
 const attributeRegexp = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
 // 解码正则数组
@@ -223,8 +227,10 @@ class MiniParser {
                 // 如果是起始标签，需要额外考虑属性
                 const [str, name, attrs = ""] = match;
                 decodedHtml = decodedHtml.substring(str.length);
+                // 判断是否是自闭合标签
+                const selfClosing = selfClosingRegexp.test(str) || selfClosingElementsMap.includes(name);
                 jsonData.push({
-                    type: "start",
+                    type: selfClosing ? "selfClosing" : "start",
                     name,
                     attrs: formatAttributes(attrs),
                 });
@@ -235,15 +241,40 @@ class MiniParser {
             const isExist = index < 0;
             const text = isExist ? decodedHtml : decodedHtml.substring(0, index);
             decodedHtml = isExist ? "" : decodedHtml.substring(index);
-            jsonData.push({ type: "text", name: "text", text });
+            jsonData.push({
+                type: "text",
+                name: "text",
+                text: text.trim(),
+            });
             // 防止超时阻碍进程
             if (Date.now() >= maxTime)
                 break;
         }
         return jsonData;
     }
+    // 结构数据生成器
+    // skeletonGenerator(jsonData: any[]) {}
+    // json数据转结构数据
     jsonToSkeleton(jsonData) {
+        const keyMap = [];
+        // 对起始和闭合标签进行标注，便于梳理结构
+        jsonData.forEach((item, index) => {
+            console.log(item);
+            const { type, selfClosing } = item;
+            switch (type) {
+                case "start":
+                    item["genKey"] = index;
+                    keyMap.push(index);
+                    break;
+                case "end":
+                    const startKey = keyMap.splice(keyMap.length - 1, 1)[0];
+                    console.log();
+                    item["genKey"] = startKey;
+                    break;
+            }
+        });
         console.log(jsonData);
+        console.log(keyMap);
     }
 }
 
