@@ -6,6 +6,7 @@ import {
   selfClosingRegexp,
   selfClosingElementsMap,
 } from "./const";
+import { attrsMapType, jsonDataType } from "./types";
 
 export default class MiniParser {
   constructor(htmlStr: string) {
@@ -25,7 +26,7 @@ export default class MiniParser {
 
   // 将属性字符串转为对象
   formatAttributes(str: string) {
-    let attrsMap: { [key: string]: string } = {};
+    let attrsMap: attrsMapType = {};
     str.replace(
       attributeRegexp,
       function (_match, name: string, value: string) {
@@ -95,16 +96,37 @@ export default class MiniParser {
   }
 
   // 结构数据生成器
-  // skeletonGenerator(jsonData: any[]) {}
+  skeletonGenerator(jsonData: jsonDataType) {
+    if (jsonData.length <= 0) return [];
+    jsonData.forEach((item, index) => {
+      // 非起始标签一律直接返回
+      if (item.type === "start" && "genKey" in item) {
+        // 通过起始标签的genKey去寻找对应的闭合标签
+        const endElementIndex = jsonData.findIndex(
+          ({ type, genKey }) => type === "end" && genKey === item.genKey
+        );
+        console.log(endElementIndex);
+        if (endElementIndex > -1) {
+          console.log(jsonData);
+          const children = jsonData.splice(index, endElementIndex);
+          console.log(endElementIndex, children);
+          // if (children.length > 0) {
+          //   item["children"] = this.skeletonGenerator(children);
+          // }
+        }
+      }
+      // console.log(item);
+      return item;
+    });
+  }
 
   // json数据转结构数据
-  jsonToSkeleton(jsonData: any[]) {
+  jsonToSkeleton(jsonData: jsonDataType) {
     const keyMap: number[] = [];
 
     // 对起始和闭合标签进行标注，便于梳理结构
     jsonData.forEach((item, index) => {
-      console.log(item);
-      const { type, selfClosing } = item;
+      const { type } = item;
       switch (type) {
         case "start":
           item["genKey"] = index;
@@ -112,12 +134,13 @@ export default class MiniParser {
           break;
         case "end":
           const startKey = keyMap.splice(keyMap.length - 1, 1)[0];
-          console.log();
           item["genKey"] = startKey;
           break;
       }
     });
+
     console.log(jsonData);
-    console.log(keyMap);
+    const skeleton = this.skeletonGenerator(jsonData);
+    console.log(skeleton);
   }
 }
