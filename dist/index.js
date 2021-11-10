@@ -179,7 +179,7 @@ class MiniParser {
     constructor(htmlStr) {
         const decodedHtml = this.decodeHtml(htmlStr);
         const jsonData = this.htmlToJson(decodedHtml);
-        this.jsonToSkeleton(jsonData);
+        return this.jsonToSkeleton(jsonData);
     }
     // 格式化html字符串
     decodeHtml(htmlStr) {
@@ -253,27 +253,31 @@ class MiniParser {
         return jsonData;
     }
     // 结构数据生成器
+    // @ts-ignore
     skeletonGenerator(jsonData) {
         if (jsonData.length <= 0)
             return [];
-        jsonData.forEach((item, index) => {
-            // 非起始标签一律直接返回
-            if (item.type === "start" && "genKey" in item) {
+        let count = 0;
+        const skeleton = [];
+        while (count < jsonData.length) {
+            const current = jsonData[count];
+            if (current.type === "start") {
                 // 通过起始标签的genKey去寻找对应的闭合标签
-                const endElementIndex = jsonData.findIndex(({ type, genKey }) => type === "end" && genKey === item.genKey);
-                console.log(endElementIndex);
-                if (endElementIndex > -1) {
-                    console.log(jsonData);
-                    const children = jsonData.splice(index, endElementIndex);
-                    console.log(endElementIndex, children);
-                    // if (children.length > 0) {
-                    //   item["children"] = this.skeletonGenerator(children);
-                    // }
-                }
+                const endElementIndex = jsonData.findIndex(({ type, genKey }) => type === "end" && genKey === current.genKey);
+                skeleton.push({
+                    ...current,
+                    children: this.skeletonGenerator(jsonData.slice(count + 1, endElementIndex)),
+                });
+                count = endElementIndex + 1;
+                continue;
             }
-            // console.log(item);
-            return item;
-        });
+            else {
+                skeleton.push(current);
+                count++;
+                continue;
+            }
+        }
+        return skeleton;
     }
     // json数据转结构数据
     jsonToSkeleton(jsonData) {
@@ -292,19 +296,18 @@ class MiniParser {
                     break;
             }
         });
-        console.log(jsonData);
-        const skeleton = this.skeletonGenerator(jsonData);
-        console.log(skeleton);
+        return this.skeletonGenerator(jsonData);
     }
 }
 
 const htmlStr = `
 <body>
     <p><img src="https://img1.dxycdn.com/2020/0707/961/8465402606288233243-68.jpg" style="white-space: normal;" /></p>
-    </br>
+    <br/>
 </body>
 <p><img src="https://img1.dxycdn.com/2020/0707/961/8465402606288233243-68.jpg" style="white-space: normal;" /></p>
-</br>
+<br/>
 `;
-new MiniParser(htmlStr);
+const data = new MiniParser(htmlStr);
+console.log(data);
 //# sourceMappingURL=index.js.map
