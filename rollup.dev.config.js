@@ -5,7 +5,7 @@ import typescript from "@rollup/plugin-typescript";
 const config = {
   input: "src/debug.ts",
   output: {
-    file: "dist/index.js",
+    file: "server/index.js",
     format: "es",
     name: "miniParser",
     sourcemap: true,
