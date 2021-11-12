@@ -3,7 +3,7 @@ import livereload from "rollup-plugin-livereload";
 import typescript from "@rollup/plugin-typescript";
 
 const config = {
-  input: "src/debug.ts",
+  input: "src/dev.ts",
   output: {
     file: "server/index.js",
     format: "es",

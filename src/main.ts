@@ -5,8 +5,9 @@ import {
   attributeRegexp,
   selfClosingRegexp,
   selfClosingElementsMap,
+  attrsMapType,
+  jsonDataType,
 } from "./const";
-import { attrsMapType, jsonDataType } from "./types";
 
 export default class MiniParser {
   constructor(htmlStr: string) {
