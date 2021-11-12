@@ -1,4 +1,4 @@
-import mParser from "mParser";
+import MiniParser from "mini-program-parser";
 
 Component({
   properties: {
@@ -11,7 +11,7 @@ Component({
     // prettier-ignore
     "htmlData": function (htmlData) {
       if (!htmlData) return;
-      const data = typeof htmlData === 'string' ? new mParser(htmlData) : htmlData;
+      const data = typeof htmlData === 'string' ? new MiniParser(htmlData) : htmlData;
       this.setData({
         parserData: data,
       });
