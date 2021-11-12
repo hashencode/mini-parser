@@ -1,5 +1,5 @@
 {
-  "name": "miniParser",
+  "name": "mparser",
   "version": "0.0.1",
   "scripts": {
     "dev": "rollup -c ./rollup.dev.config.js --watch",

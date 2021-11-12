@@ -7,7 +7,6 @@ const config = {
   output: {
     file: "server/index.js",
     format: "es",
-    name: "miniParser",
     sourcemap: true,
   },
   plugins: [

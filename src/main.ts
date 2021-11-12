@@ -9,7 +9,7 @@ import {
   jsonDataType,
 } from "./const";
 
-export default class MiniParser {
+export default class mParser {
   constructor(htmlStr: string) {
     const decodedHtml = this.decodeHtml(htmlStr);
     const jsonData = this.htmlToJson(decodedHtml);

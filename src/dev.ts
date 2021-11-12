@@ -1,4 +1,4 @@
-import MiniParser from "./main";
+import mParser from "./main";
 
 const htmlStr = `
 <body>
@@ -9,5 +9,4 @@ const htmlStr = `
 <br/>
 `;
 
-const data = new MiniParser(htmlStr);
-console.log(data);
+console.log(new mParser(htmlStr));
