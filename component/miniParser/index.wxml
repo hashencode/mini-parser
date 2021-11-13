@@ -10,7 +10,7 @@
     <text wx:elif="{{item.name==='br'}}" class="mini-parser-br">\n</text>
     <!-- 默认 -->
     <view wx:else class="mini-parser-view {{item.attrs.class || ''}}" style="{{item.attrs.style}}">
-      <miniParser wx:if="{{item.children}}" htmlData="{{item.children}}"></miniParser>
+      <miniParser wx:if="{{item.children}}" htmlStr="{{item.children}}"></miniParser>
     </view>
   </block>
 </block>

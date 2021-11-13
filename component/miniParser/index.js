@@ -2,16 +2,16 @@ import MiniParser from "mini-program-parser";
 
 Component({
   properties: {
-    htmlData: { type: String, optionalTypes: [Array] },
+    htmlStr: { type: String, optionalTypes: [Array] },
   },
   data: {
     parserData: null,
   },
   observers: {
     // prettier-ignore
-    "htmlData": function (htmlData) {
-      if (!htmlData) return;
-      const data = typeof htmlData === 'string' ? new MiniParser(htmlData) : htmlData;
+    "htmlStr": function (htmlStr) {
+      if (!htmlStr) return;
+      const data = typeof htmlStr === 'string' ? new MiniParser(htmlStr) : htmlStr;
       this.setData({
         parserData: data,
       });

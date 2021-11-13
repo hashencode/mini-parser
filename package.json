@@ -1,10 +1,11 @@
 {
-  "name": "mini-program-parser",
-  "version": "0.0.2",
+  "name": "mini-program-parser-for-dev",
+  "version": "0.0.3",
   "scripts": {
     "dev": "rollup -c ./rollup.dev.config.js --watch",
     "build": "rollup -c ./rollup.build.config.js"
   },
+  "miniprogram": "dist",
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.16.0",
