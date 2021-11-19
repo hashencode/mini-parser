@@ -10,7 +10,9 @@ const config = {
     sourcemap: true,
   },
   plugins: [
-    typescript(),
+    typescript({
+      sourceMap: true,
+    }),
     serve({
       open: true,
       port: 8082,
