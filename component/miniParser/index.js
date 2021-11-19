@@ -1,4 +1,4 @@
-import MiniParser from "mini-program-parser";
+const MiniParser = require("mini-program-parser");
 
 Component({
   properties: {
