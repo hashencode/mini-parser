@@ -5,12 +5,21 @@ import {
   attributeRegexp,
   selfClosingRegexp,
   selfClosingElementsMap,
-  attrsMapType,
-  jsonDataType,
+  AttrsMapType,
+  JsonDataType,
+  ConfigType,
+  defaultConfig,
 } from "./const";
 
 export default class MiniParser {
-  constructor(htmlStr: string) {
+  private readonly config;
+  constructor(htmlStr: string, config?: ConfigType) {
+    this.config = config ? { defaultConfig, ...config } : defaultConfig;
+    setTimeout(this.steps(htmlStr), this.config.delay);
+  }
+
+  // 处理步骤
+  steps(htmlStr: string) {
     const decodedHtml = this.decodeHtml(htmlStr);
     const jsonData = this.htmlToJson(decodedHtml);
     return this.jsonToSkeleton(jsonData);
@@ -27,7 +36,7 @@ export default class MiniParser {
 
   // 将属性字符串转为对象
   formatAttributes(str: string) {
-    let attrsMap: attrsMapType = {};
+    let attrsMap: AttrsMapType = {};
     str.replace(
       attributeRegexp,
       function (_match, name: string, value: string) {
@@ -43,9 +52,10 @@ export default class MiniParser {
 
   // 解析html字符串并转为json结构
   htmlToJson(decodedHtml: string) {
-    let { formatAttributes } = this;
+    let { formatAttributes, config } = this;
+    const { timeout } = config;
     const jsonData = [];
-    const maxTime = Date.now() + 1000;
+    const maxTime = Date.now() + timeout;
 
     while (decodedHtml) {
       // 如果是结束标签
@@ -97,13 +107,13 @@ export default class MiniParser {
   }
 
   // 结构数据生成器
-  // @ts-ignore
-  skeletonGenerator(jsonData: jsonDataType) {
+  skeletonGenerator(jsonData: JsonDataType, parentId = 0): any {
     if (jsonData.length <= 0) return [];
     let count = 0;
     const skeleton = [];
     while (count < jsonData.length) {
       const current = jsonData[count];
+      const id = `${parentId}-${count}-${current.type}`;
 
       if (current.type === "start") {
         // 通过起始标签的genKey去寻找对应的闭合标签
@@ -111,17 +121,17 @@ export default class MiniParser {
           ({ type, genKey }) => type === "end" && genKey === current.genKey
         );
         skeleton.push({
+          id,
           ...current,
           children: this.skeletonGenerator(
-            jsonData.slice(count + 1, endElementIndex)
+            jsonData.slice(count + 1, endElementIndex),
+            count
           ),
         });
         count = endElementIndex + 1;
-        continue;
       } else {
-        skeleton.push(current);
+        skeleton.push({ id, ...current });
         count++;
-        continue;
       }
     }
 
@@ -129,7 +139,7 @@ export default class MiniParser {
   }
 
   // json数据转结构数据
-  jsonToSkeleton(jsonData: jsonDataType) {
+  jsonToSkeleton(jsonData: JsonDataType) {
     const keyMap: number[] = [];
 
     // 对起始和闭合标签进行标注，便于梳理结构
