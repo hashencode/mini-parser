@@ -9,6 +9,11 @@ import {
   JsonDataType,
   ConfigType,
   defaultConfig,
+  formatElementRules,
+  needFormatNameElements,
+  validElementName,
+  VideoConfig,
+  ImageConfig,
 } from "./const";
 
 export default class MiniParser {
@@ -35,25 +40,87 @@ export default class MiniParser {
   }
 
   // 将属性字符串转为对象
-  formatAttributes(str: string) {
+  formatAttributes(str: string, elementName: validElementName) {
+    if (!str) return {};
+    const { attributeProcessor } = this;
     let attrsMap: AttrsMapType = {};
     str.replace(
       attributeRegexp,
       function (_match, name: string, value: string) {
         const args = Array.prototype.slice.call(arguments);
         if (args.length >= 3) {
-          attrsMap[name] = value.replace(/(^|[^\\])"/g, '$1\\"');
+          const attrValue = value.replace(/(^|[^\\])"/g, '$1\\"');
+          attrsMap[name] = attributeProcessor(name, attrValue, elementName);
         }
         return "";
       }
     );
-    return attrsMap;
+
+    // 追加小程序元素的内置属性
+    let buildInAttrs = {};
+    if ("buildInAttrs" in this.config[elementName]) {
+      buildInAttrs = this.config[elementName];
+    }
+    return { attrsMap, ...buildInAttrs };
+  }
+
+  // 根据配置项处理属性
+  attributeProcessor(
+    attrName: string,
+    attrValue: string,
+    elementName: validElementName
+  ): string {
+    const { config } = this;
+
+    switch (attrName) {
+      case "src":
+        if (["image", "video"].includes(attrName)) {
+          const { srcFormat } = config[elementName] as
+            | VideoConfig
+            | ImageConfig;
+          // return srcFormat ? srcFormat(attrValue) : attrValue;
+          return srcFormat ? srcFormat(attrValue) : attrValue;
+        }
+      case "class":
+        const { defaultClass, clearAttrs } = config;
+
+        return;
+
+      // case "image":
+      //   return "";
+      // case "text":
+      //   return "";
+      // case "video":
+      //   return "";
+      // case "link":
+      //   return "";
+      // case "view":
+      //   return "";
+    }
+
+    return attrValue;
+    // @ts-ignore
+    // const { clearAttrs, defaultClass } = config[elementName];
+    // // 存在于clearAttrs内的属性不会被添加
+    // if (clearAttrs && !clearAttrs.includes(name)) {
+    //   // 因为存在默认值，特殊处理部分属性
+    //   if (name === "class" && defaultClass) {
+    //     attrsMap[name] = `${defaultClass} ${attrValue}`;
+    //   } else {
+    //     attrsMap[name] = attrValue;
+    //   }
+    // }
+  }
+
+  // 将元素名进行转换
+  formatElementName(name: string): validElementName {
+    if (needFormatNameElements.includes(name)) return formatElementRules[name];
+    return "view";
   }
 
   // 解析html字符串并转为json结构
   htmlToJson(decodedHtml: string) {
-    let { formatAttributes, config } = this;
-    const { timeout } = config;
+    const { timeout, ignoredElement } = this.config;
     const jsonData = [];
     const maxTime = Date.now() + timeout;
 
@@ -63,10 +130,17 @@ export default class MiniParser {
         const match = decodedHtml.match(endElementRegexp);
         if (!match) continue;
         const [str, name] = match;
+        // 判断是否在是存在于ignoredElement中的指定忽略的元素
+        const ignore = ignoredElement.includes(name);
+        if (ignore) continue;
         // 去掉当前解析的字符
         decodedHtml = decodedHtml.substring(str.length);
         // 将当前数据追加到数组
-        jsonData.push({ type: "end", name });
+        jsonData.push({
+          type: "end",
+          name: this.formatElementName(name),
+          originName: name,
+        });
         continue;
       }
 
@@ -76,14 +150,21 @@ export default class MiniParser {
         if (!match) continue;
         // 如果是起始标签，需要额外考虑属性
         const [str, name, attrs = ""] = match;
+        // 判断是否在是存在于ignoredElement中的指定忽略的元素
+        const ignore = ignoredElement.includes(name);
+        if (ignore) continue;
+        // 去掉当前解析的字符
         decodedHtml = decodedHtml.substring(str.length);
         // 判断是否是自闭合标签
         const selfClosing =
           selfClosingRegexp.test(str) || selfClosingElementsMap.includes(name);
+        // 转换后的元素名
+        const elementName = this.formatElementName(name);
         jsonData.push({
           type: selfClosing ? "selfClosing" : "start",
-          name,
-          attrs: formatAttributes(attrs),
+          name: elementName,
+          originName: name,
+          attrs: this.formatAttributes(attrs, elementName),
         });
         continue;
       }
@@ -113,7 +194,7 @@ export default class MiniParser {
     const skeleton = [];
     while (count < jsonData.length) {
       const current = jsonData[count];
-      const id = `${parentId}-${count}-${current.type}`;
+      const miniParserId = `${parentId}-${count}-${current.type}`;
 
       if (current.type === "start") {
         // 通过起始标签的genKey去寻找对应的闭合标签
@@ -121,7 +202,7 @@ export default class MiniParser {
           ({ type, genKey }) => type === "end" && genKey === current.genKey
         );
         skeleton.push({
-          id,
+          miniParserId,
           ...current,
           children: this.skeletonGenerator(
             jsonData.slice(count + 1, endElementIndex),
@@ -130,7 +211,7 @@ export default class MiniParser {
         });
         count = endElementIndex + 1;
       } else {
-        skeleton.push({ id, ...current });
+        skeleton.push({ miniParserId, ...current });
         count++;
       }
     }

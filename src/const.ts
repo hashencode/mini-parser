@@ -1,67 +1,86 @@
 // 默认配置项
 export const defaultConfig: ConfigType = {
   timeout: 2000,
-  ignoreType: [],
+  ignoredElement: [],
   delay: 0,
-  link: {
-    pageUrl: undefined,
-    onTap: undefined,
-  },
-  img: {
+  image: {
     customComponent: undefined,
     defaultClass: "mini-parser-image",
-    defaultStyle: undefined,
-    allowAttrs: ["src"],
+    clearAttrs: [],
+    // 特殊配置
     srcFormat: undefined,
-    mode: "widthFix",
-    webp: true,
-    lazyLoad: false,
-    showMenu: false,
+    // 内置属性
+    buildInAttrs: {
+      mode: "widthFix",
+      webp: true,
+      lazyLoad: false,
+      showMenu: false,
+    },
   },
   text: {
     customComponent: undefined,
     defaultClass: "mini-parser-text",
-    defaultStyle: undefined,
-    allowAttrs: [],
+    // 特殊配置
     textFormat: undefined,
     // 内置属性
-    decode: false, // 是否解码，false
-    space: undefined, // 显示连续空格，undefined
-    userSelect: false, // 文本是否可选中，false
+    buildInAttrs: {
+      decode: false,
+      space: undefined,
+      userSelect: false,
+    },
   },
   video: {
     customComponent: undefined,
     defaultClass: "mini-parser-video",
-    defaultStyle: undefined,
-    allowAttrs: ["src"],
+    clearAttrs: [],
+    // 特殊配置
     srcFormat: undefined,
     // 内置属性
-    autoplay: false,
-    controls: true,
-    direction: undefined,
-    enablePlayGesture: false,
-    enableProgressGesture: true,
-    loop: false,
-    muted: false,
-    objectFit: "contain",
-    playBtnPosition: "bottom",
-    poster: undefined,
-    showCastingButton: false,
-    showCenterPlayBtn: true,
-    showFullscreenBtn: true,
-    showMuteBtn: false,
-    showPlayBtn: true,
-    showProgress: true,
-    title: "",
-    vslideGesture: false,
-    vslideGestureInFullscreen: true,
+    buildInAttrs: {
+      autoplay: false,
+      controls: true,
+      direction: undefined,
+      enablePlayGesture: false,
+      enableProgressGesture: true,
+      loop: false,
+      muted: false,
+      objectFit: "contain",
+      playBtnPosition: "bottom",
+      poster: undefined,
+      showCastingButton: false,
+      showCenterPlayBtn: true,
+      showFullscreenBtn: true,
+      showMuteBtn: false,
+      showPlayBtn: true,
+      showProgress: true,
+      title: "",
+      vslideGesture: false,
+      vslideGestureInFullscreen: true,
+    },
   },
   view: {
     customComponent: undefined,
     defaultClass: "mini-parser-view",
-    defaultStyle: undefined,
-    allowAttrs: [],
+    clearAttrs: [],
   },
+  link: {
+    customComponent: undefined,
+    defaultClass: "mini-parser-link",
+    clearAttrs: [],
+    // 特殊配置
+    targetPage: undefined,
+    onTap: undefined,
+  },
+};
+
+// 需要被转换的元素的名称
+export const needFormatNameElements = ["img", "video", "a"];
+
+// 元素名称转换规则
+export const formatElementRules: { [key: string]: validElementName } = {
+  img: "image",
+  video: "video",
+  a: "link",
 };
 
 // 起始标签正则
@@ -254,10 +273,14 @@ export interface AttrsMapType {
 export type JsonDataType = {
   type: string;
   name: string;
+  originName?: string;
   attrs?: { [key: string]: string };
   genKey?: number;
   children?: JsonDataType[];
 }[];
+
+// 配置中出现的元素名
+export type validElementName = "image" | "video" | "text" | "view" | "link";
 
 type ModeType =
   | "scaleToFill"
@@ -274,44 +297,42 @@ type ModeType =
   | "bottom left"
   | "bottom right";
 
-export interface ConfigType {
-  timeout: number; // 解析超时毫秒数，1000
-  ignoreType: string[]; // 忽略解析的元素类型，[]
-  delay: number; // 延迟解析毫秒数，0
-  link: {
-    pageUrl?: string; // 跳转小程序页面
-    onTap?: (url: string) => void; // 链接点击事件回调
-  };
-  img: {
-    customComponent?: string; // 自定义组件名，undefined
-    defaultClass?: string; // 默认类名，mini-parser-image
-    defaultStyle?: string; // 默认样式，undefined
-    allowAttrs?: string[]; // 允许生效的属性，["src"]
-    srcFormat?: (url: string) => string; // 自定义路径格式化方法，undefined
-    // 内置属性
+export interface ImageConfig {
+  customComponent?: string; // 自定义组件名，undefined
+  clearAttrs?: boolean | string[]; // 需要被移除的属性，[]
+  defaultClass?: string; // 默认类名，mini-parser-image
+  // 特殊配置
+  srcFormat?: (url: string) => string; // 自定义路径格式化方法，undefined
+  // 内置属性
+  buildInAttrs?: {
     lazyLoad?: boolean; // 是否懒加载，false
     mode?: ModeType; //裁剪、缩放模式，"widthFix"
     showMenu?: boolean; // 是否显示分享菜单，false
     webp?: boolean; // 是否支持webp格式，true
   };
-  text: {
-    customComponent?: string; // 自定义组件名，undefined
-    defaultClass?: string; // 默认类名，mini-parser-text
-    defaultStyle?: string; // 默认样式，undefined
-    allowAttrs?: string[]; // 允许生效的属性，[]
-    textFormat?: (text: string) => string; // 自定义文字格式化方法，undefined
-    // 内置属性
+}
+
+export interface TextConfig {
+  customComponent?: string; // 自定义组件名，undefined
+  defaultClass?: string; // 默认类名，mini-parser-text
+  // 特殊配置
+  textFormat?: (text: string) => string; // 自定义文字格式化方法，undefined
+  // 内置属性
+  buildInAttrs?: {
     decode?: boolean; // 是否解码，false
     space?: "ensp" | "emsp" | "nbsp" | undefined; // 显示连续空格，undefined
     userSelect?: boolean; // 文本是否可选中，false
   };
-  video: {
-    customComponent?: string; // 自定义组件名，undefined
-    defaultClass?: string; // 默认类名，mini-parser-video
-    defaultStyle?: string; // 默认样式，undefined
-    allowAttrs?: string[]; // 允许生效的属性，["src"]
-    srcFormat?: (url: string) => string; // 自定义路径格式化方法，undefined
-    // 内置属性
+}
+
+export interface VideoConfig {
+  customComponent?: string; // 自定义组件名，undefined
+  clearAttrs?: boolean | string[]; // 需要被移除的属性，[]
+  defaultClass?: string; // 默认类名，mini-parser-video
+  // 特殊配置
+  srcFormat?: (url: string) => string; // 自定义路径格式化方法，undefined
+  // 内置属性
+  buildInAttrs?: {
     autoplay?: boolean; // 自动播放，false
     controls?: boolean; // 显示播放控件，true
     direction?: 0 | 90 | -90; // 全屏时旋转方向，undefined
@@ -332,76 +353,30 @@ export interface ConfigType {
     vslideGesture?: boolean; // 非全屏下开启亮度和音量调节手势，false
     vslideGestureInFullscreen?: boolean; // 全屏下开启亮度和音量调节手势，true
   };
-  view: {
-    customComponent?: string; // 自定义组件名，undefined
-    defaultClass?: string; // 默认类名，mini-parser-view
-    defaultStyle?: string; // 默认样式，undefined
-    allowAttrs?: string[]; // 允许生效的属性，[]
-  };
 }
 
-// export interface ConfigType {
-//   timeout?: number; // 解析超时毫秒数，1000
-//   ignoreType?: string[]; // 忽略解析的元素类型，[]
-//   delay?: number; // 延迟解析毫秒数，0
-//   link?: {
-//     pageUrl?: string; // 跳转小程序页面
-//     onTap?: (url: string) => void; // 链接点击事件回调
-//   };
-//   img?: {
-//     customComponent?: string; // 自定义组件名，undefined
-//     defaultClass?: string; // 默认类名，mini-parser-image
-//     defaultStyle?: string; // 默认样式，undefined
-//     allowAttrs?: string[]; // 允许生效的属性，["src"]
-//     srcFormat?: (url: string) => string; // 自定义路径格式化方法，undefined
-//     // 内置属性
-//     lazyLoad?: boolean; // 是否懒加载，false
-//     mode?: ModeType; //裁剪、缩放模式，"widthFix"
-//     showMenu?: boolean; // 是否显示分享菜单，false
-//     webp?: boolean; // 是否支持webp格式，true
-//   };
-//   text?: {
-//     customComponent?: string; // 自定义组件名，undefined
-//     defaultClass?: string; // 默认类名，mini-parser-text
-//     defaultStyle?: string; // 默认样式，undefined
-//     allowAttrs?: string[]; // 允许生效的属性，[]
-//     textFormat?: (text: string) => string; // 自定义文字格式化方法，undefined
-//     // 内置属性
-//     decode?: boolean; // 是否解码，false
-//     space?: "ensp" | "emsp" | "nbsp" | undefined; // 显示连续空格，undefined
-//     userSelect?: boolean; // 文本是否可选中，false
-//   };
-//   video?: {
-//     customComponent?: string; // 自定义组件名，undefined
-//     defaultClass?: string; // 默认类名，mini-parser-video
-//     defaultStyle?: string; // 默认样式，undefined
-//     allowAttrs?: string[]; // 允许生效的属性，["src"]
-//     srcFormat?: (url: string) => string; // 自定义路径格式化方法，undefined
-//     // 内置属性
-//     autoplay?: boolean; // 自动播放，false
-//     controls?: boolean; // 显示播放控件，true
-//     direction?: 0 | 90 | -90; // 全屏时旋转方向，undefined
-//     enablePlayGesture?: boolean; // 开启播放手势，false
-//     enableProgressGesture?: boolean; // 支持进度手势，true
-//     loop?: boolean; // 循环播放，false
-//     muted?: boolean; // 静音，false
-//     objectFit?: "contain" | "fill" | "cover"; // 视频与容器大小不一致时的表现形式，contain
-//     playBtnPosition?: "bottom" | "center"; // 播放按钮位置，bottom
-//     poster?: string | ((attrs: AttrsMapType[]) => string); // 封面图片地址，undefined
-//     showCastingButton?: boolean; // 显示投屏按钮，false
-//     showCenterPlayBtn?: boolean; // 显示视频中间播放按钮，true
-//     showFullscreenBtn?: boolean; // 显示全屏按钮，true
-//     showMuteBtn?: boolean; // 显示静音按钮，false
-//     showPlayBtn?: boolean; // 显示底部控制栏播放按钮，true
-//     showProgress?: boolean; // 显示进度条，true
-//     title?: string | ((attrs: AttrsMapType[]) => string); // 视频标题，""
-//     vslideGesture?: boolean; // 非全屏下开启亮度和音量调节手势，false
-//     vslideGestureInFullscreen?: boolean; // 全屏下开启亮度和音量调节手势，true
-//   };
-//   view?: {
-//     customComponent?: string; // 自定义组件名，undefined
-//     defaultClass?: string; // 默认类名，mini-parser-view
-//     defaultStyle?: string; // 默认样式，undefined
-//     allowAttrs?: string[]; // 允许生效的属性，[]
-//   };
-// }
+export interface ViewConfig {
+  customComponent?: string; // 自定义组件名，undefined
+  clearAttrs?: boolean | string[]; // 需要被移除的属性，[]
+  defaultClass?: string; // 默认类名，mini-parser-view
+}
+
+export interface LinkConfig {
+  customComponent?: string; // 自定义组件名，undefined
+  clearAttrs?: boolean | string[]; // 需要被移除的属性，[]
+  defaultClass?: string; // 默认类名，mini-parser-link
+  // 特殊配置
+  targetPage?: string; // 跳转小程序页面
+  onTap?: (url: string) => void; // 链接点击事件回调
+}
+
+export interface ConfigType {
+  timeout: number; // 解析超时毫秒数，1000
+  ignoredElement: string[]; // 忽略解析的元素类型，[]
+  delay: number; // 延迟解析毫秒数，0
+  image: ImageConfig;
+  text: TextConfig;
+  video: VideoConfig;
+  view: ViewConfig;
+  link: LinkConfig;
+}
