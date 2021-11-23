@@ -1,5 +1,5 @@
 <block wx:if="{{parserData}}">
-  <block wx:for="{{parserData}}" wx:key="miniParserId">
+  <block wx:for="{{parserData}}" wx:key="id">
     <!-- 文字 -->
     <text wx:if="{{item.name==='text'}}" class="mini-parser-text">{{item.text}}</text>
     <!-- 图片 -->

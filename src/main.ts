@@ -5,16 +5,16 @@ import {
   attributeRegexp,
   selfClosingRegexp,
   selfClosingElementsMap,
-  AttrsMapType,
-  JsonDataType,
-  ConfigType,
   defaultConfig,
   formatElementRules,
   needFormatNameElements,
-  validElementName,
-  VideoConfig,
-  ImageConfig,
 } from "./const";
+import {
+  AttrsMapType,
+  JsonDataType,
+  ConfigType,
+  validElementName,
+} from "./types";
 
 export default class MiniParser {
   private readonly config;
@@ -58,8 +58,9 @@ export default class MiniParser {
 
     // 追加小程序元素的内置属性
     let buildInAttrs = {};
-    if ("buildInAttrs" in this.config[elementName]) {
-      buildInAttrs = this.config[elementName];
+    const current = this.config[elementName];
+    if ("buildInAttrs" in current) {
+      buildInAttrs = current.buildInAttrs;
     }
     return { attrsMap, ...buildInAttrs };
   }
@@ -70,46 +71,27 @@ export default class MiniParser {
     attrValue: string,
     elementName: validElementName
   ): string {
-    const { config } = this;
+    const config: any = this.config[elementName];
 
+    // 如果属性值需要被清理
+    if ("clearAttrs" in config && config.clearAttrs.includes(elementName)) {
+      attrValue = "";
+    }
+
+    // 根据属性的类型进行处理
     switch (attrName) {
       case "src":
         if (["image", "video"].includes(attrName)) {
-          const { srcFormat } = config[elementName] as
-            | VideoConfig
-            | ImageConfig;
-          // return srcFormat ? srcFormat(attrValue) : attrValue;
+          const { srcFormat } = config[elementName];
           return srcFormat ? srcFormat(attrValue) : attrValue;
         }
+        return attrValue;
       case "class":
-        const { defaultClass, clearAttrs } = config;
-
-        return;
-
-      // case "image":
-      //   return "";
-      // case "text":
-      //   return "";
-      // case "video":
-      //   return "";
-      // case "link":
-      //   return "";
-      // case "view":
-      //   return "";
+        const { defaultClass } = config;
+        return defaultClass ? `${defaultClass} ${attrValue}` : attrValue;
     }
 
     return attrValue;
-    // @ts-ignore
-    // const { clearAttrs, defaultClass } = config[elementName];
-    // // 存在于clearAttrs内的属性不会被添加
-    // if (clearAttrs && !clearAttrs.includes(name)) {
-    //   // 因为存在默认值，特殊处理部分属性
-    //   if (name === "class" && defaultClass) {
-    //     attrsMap[name] = `${defaultClass} ${attrValue}`;
-    //   } else {
-    //     attrsMap[name] = attrValue;
-    //   }
-    // }
   }
 
   // 将元素名进行转换
@@ -172,12 +154,16 @@ export default class MiniParser {
       // 寻找<符号，将之前的字符视为文字
       const index = decodedHtml.indexOf("<");
       const isExist = index < 0;
-      const text = isExist ? decodedHtml : decodedHtml.substring(0, index);
+      let text = isExist ? decodedHtml : decodedHtml.substring(0, index);
+      text = text.trim();
+      // 允许使用配置项的文字转换函数
+      const { textFormat } = this.config.text;
+      if (textFormat) text = textFormat(text);
       decodedHtml = isExist ? "" : decodedHtml.substring(index);
       jsonData.push({
         type: "text",
         name: "text",
-        text: text.trim(),
+        text,
       });
 
       // 防止超时阻碍进程
