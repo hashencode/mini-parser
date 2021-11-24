@@ -20,7 +20,7 @@ export default class MiniParser {
   private readonly config;
   constructor(htmlStr: string, config?: ConfigType) {
     this.config = config ? { defaultConfig, ...config } : defaultConfig;
-    setTimeout(this.steps(htmlStr), this.config.delay);
+    return this.steps(htmlStr);
   }
 
   // 处理步骤
@@ -42,7 +42,7 @@ export default class MiniParser {
   // 将属性字符串转为对象
   formatAttributes(str: string, elementName: validElementName) {
     if (!str) return {};
-    const { attributeProcessor } = this;
+    const that = this;
     let attrsMap: AttrsMapType = {};
     str.replace(
       attributeRegexp,
@@ -50,7 +50,11 @@ export default class MiniParser {
         const args = Array.prototype.slice.call(arguments);
         if (args.length >= 3) {
           const attrValue = value.replace(/(^|[^\\])"/g, '$1\\"');
-          attrsMap[name] = attributeProcessor(name, attrValue, elementName);
+          attrsMap[name] = that.attributeProcessor(
+            name,
+            attrValue,
+            elementName
+          );
         }
         return "";
       }
@@ -62,7 +66,7 @@ export default class MiniParser {
     if ("buildInAttrs" in current) {
       buildInAttrs = current.buildInAttrs;
     }
-    return { attrsMap, ...buildInAttrs };
+    return { ...attrsMap, ...buildInAttrs };
   }
 
   // 根据配置项处理属性
@@ -180,7 +184,7 @@ export default class MiniParser {
     const skeleton = [];
     while (count < jsonData.length) {
       const current = jsonData[count];
-      const miniParserId = `${parentId}-${count}-${current.type}`;
+      const miniParserId = `${parentId}_${count}_${current.name}`;
 
       if (current.type === "start") {
         // 通过起始标签的genKey去寻找对应的闭合标签

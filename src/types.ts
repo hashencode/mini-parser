@@ -31,7 +31,6 @@ type ModeType =
   | "bottom right";
 
 export interface CommonConfig {
-  customComponent: string; // 自定义组件名，""
   clearAttrs?: string[]; // 需要被移除的属性，[]
   defaultClass: string; // 默认类名，mini-parser-*
 }
@@ -84,7 +83,6 @@ export interface VideoConfig extends CommonConfig {
 }
 
 export interface LinkConfig extends CommonConfig {
-  targetPage?: string; // 跳转小程序页面
   onTap?: (url: string) => void; // 链接点击事件回调
 }
 

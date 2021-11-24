@@ -6,7 +6,6 @@ export const defaultConfig: ConfigType = {
   ignoredElement: [],
   delay: 0,
   image: {
-    customComponent: "",
     defaultClass: "mini-parser-image",
     clearAttrs: [],
     // 内置属性
@@ -18,7 +17,6 @@ export const defaultConfig: ConfigType = {
     },
   },
   text: {
-    customComponent: "",
     defaultClass: "mini-parser-text",
     // 内置属性
     buildInAttrs: {
@@ -27,7 +25,6 @@ export const defaultConfig: ConfigType = {
     },
   },
   video: {
-    customComponent: "",
     defaultClass: "mini-parser-video",
     clearAttrs: [],
     // 内置属性
@@ -51,12 +48,10 @@ export const defaultConfig: ConfigType = {
     },
   },
   view: {
-    customComponent: "",
     defaultClass: "mini-parser-view",
     clearAttrs: [],
   },
   link: {
-    customComponent: "",
     defaultClass: "mini-parser-link",
     clearAttrs: [],
   },
