@@ -2,11 +2,13 @@ export interface AttrsMapType {
   [key: string]: string;
 }
 
+// 转换后的数据结构
 export type JsonDataType = {
   type: string;
   name: string;
   originName?: string;
   attrs?: { [key: string]: string };
+  display?: string;
   genKey?: number;
   children?: JsonDataType[];
 }[];
@@ -30,6 +32,7 @@ type ModeType =
   | "bottom left"
   | "bottom right";
 
+// 以下为配置项属性
 export interface CommonConfig {
   clearAttrs?: string[]; // 需要被移除的属性，[]
   defaultClass: string; // 默认类名，mini-parser-*

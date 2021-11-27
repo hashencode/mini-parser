@@ -1,9 +1,37 @@
 import { ConfigType, validElementName } from "./types";
 
+// 不合规元素
+const defaultIgnoreElements =
+  "area,base,canvas,embed,frame,head,iframe,input,link,map,meta,param,rp,script,source,style,textarea,title,track,wbr";
+export const defaultIgnoreElementsMap = defaultIgnoreElements.split(",");
+
+// 自闭合标签
+const selfClosingElements =
+  "area,base,br,col,circle,ellipse,embed,frame,hr,img,input,line,link,meta,param,path,polygon,rect,source,track,use,wbr";
+export const selfClosingElementsMap = selfClosingElements.split(",");
+
+// 块级元素标签
+const blockElements =
+  "address,article,aside,blockquote,dd,div,dl,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ol,p,pre,section,table,ul";
+export const blockElementsMap = blockElements.split(",");
+
+// 元素名称转换规则
+export const formatElementRules: { [key: string]: validElementName } = {
+  img: "image",
+  video: "video",
+  a: "link",
+};
+
+// 需要被转换的元素
+export const needFormatNameElements = Object.keys(formatElementRules);
+
+// 有src属性的元素
+export const elementsHaveSrcAttr = ["image", "video"];
+
 // 默认配置项
 export const defaultConfig: ConfigType = {
   timeout: 2000,
-  ignoredElement: [],
+  ignoredElement: defaultIgnoreElementsMap,
   delay: 0,
   image: {
     defaultClass: "mini-parser-image",
@@ -57,29 +85,12 @@ export const defaultConfig: ConfigType = {
   },
 };
 
-// 需要被转换的元素的名称
-export const needFormatNameElements = ["img", "video", "a"];
-
-// 元素名称转换规则
-export const formatElementRules: { [key: string]: validElementName } = {
-  img: "image",
-  video: "video",
-  a: "link",
-};
-
 // 起始标签正则
 export const startElementRegexp =
   /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/;
 
 // 结束标签正则
 export const endElementRegexp = /^<\/([-A-Za-z0-9_]+)[^>]*>/;
-
-// 自闭合标签匹配正则
-export const selfClosingRegexp =
-  /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\/>/;
-const selfClosingElements =
-  "area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr";
-export const selfClosingElementsMap = selfClosingElements.split(",");
 
 // 获取属性正则
 export const attributeRegexp =

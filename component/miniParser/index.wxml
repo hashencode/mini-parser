@@ -1,15 +1,15 @@
 <block wx:if="{{parserData}}">
   <block wx:for="{{parserData}}" wx:key="id">
     <!-- 文字 -->
-    <text wx:if="{{item.name==='text'}}" class="mini-parser-text">{{item.text}}</text>
+    <text wx:if="{{item.name==='text'}}" class="{{item.attrs.class}}">{{item.text}}</text>
     <!-- 图片 -->
-    <image wx:elif="{{item.name==='img'}}" class="mini-parser-image {{item.attrs.class || ''}}" style="{{item.attrs.style}}" src="{{item.attrs.src}}"></image>
+    <image wx:elif="{{item.name==='image'}}" class="{{item.attrs.class}}" style="{{item.attrs.style}}" src="{{item.attrs.src}}"></image>
     <!-- 视频 -->
-    <video wx:elif="{{item.name==='video'}}" class="mini-parser-video {{item.attrs.class || ''}}" style="{{item.attrs.style}}" src="{{item.attrs.src}}"></video>
+    <video wx:elif="{{item.name==='video'}}" class="{{item.attrs.class}}" style="{{item.attrs.style}}" src="{{item.attrs.src}}"></video>
     <!-- 换行 -->
-    <text wx:elif="{{item.name==='br'}}" class="mini-parser-br">\n</text>
+    <text wx:elif="{{item.name==='link'}}" class="{{item.attrs.class}}">\n</text>
     <!-- 默认 -->
-    <view wx:else class="mini-parser-view {{item.attrs.class || ''}}" style="{{item.attrs.style}}">
+    <view wx:else class="{{item.attrs.class}}" style="{{item.attrs.style}}">
       <miniParser wx:if="{{item.children}}" htmlStr="{{item.children}}"></miniParser>
     </view>
   </block>
