@@ -1,9 +1,8 @@
 import MiniParser from "./main";
 
 const htmlStr = `
-<div id="div_class">
-    <img src="https://img1.dxycdn.com/2020/0707/961/8465402606288233243-68.jpg" style="white-space: normal;" />
-</div>
+<div class="test-class" id="test-id" style="display: flex;align-items: center" width="100px" noValue></div>
+<img class="test-class" id="test-id" src="https://xxx.com" alt="">
 `;
 
 const data = new MiniParser(htmlStr);

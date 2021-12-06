@@ -10,6 +10,7 @@ import {
   defaultIgnoreElementsMap,
   blockElementsMap,
   elementsHaveSrcAttr,
+  selfClosingElementRegexp,
 } from "./const";
 import {
   AttrsMapType,
@@ -50,6 +51,14 @@ export default class MiniParser {
     );
   }
 
+  // 是否是自闭合标签
+  isSelfClosingElement(str: string, name: string): boolean {
+    return (
+      selfClosingElementRegexp.test(str) ||
+      selfClosingElementsMap.includes(name)
+    );
+  }
+
   // 将属性字符串转为对象
   formatAttributes(str: string, elementName: validElementName): AttrsMapType {
     if (!str) return {};
@@ -60,7 +69,7 @@ export default class MiniParser {
       function (_match, name: string, value: string) {
         const args = Array.prototype.slice.call(arguments);
         if (args.length >= 3) {
-          const attrValue = value.replace(/(^|[^\\])"/g, '$1\\"');
+          const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
           attrsMap[name] = that.attributeProcessor(
             name,
             attrValue,
@@ -115,55 +124,31 @@ export default class MiniParser {
     return "view";
   }
 
+  // 更新解析字符串
+  updateHtmlStr(decodedHtml: string, str: string) {
+    return decodedHtml.substring(str.length);
+  }
+
   // 解析html字符串并转为json结构
   htmlToJson(decodedHtml: string) {
     const maxTime = Date.now() + this.config.timeout;
     const jsonData = [];
 
     while (decodedHtml) {
-      // 如果是起始标签
-      if (decodedHtml.indexOf("<") === 0) {
-        const match = decodedHtml.match(startElementRegexp);
-        if (!match) continue;
-        // 如果是起始标签，需要额外考虑属性
-        const [str, name, attrString = ""] = match;
-        // 判断元素是否需要解析
-        if (this.isInvalidElement(name)) continue;
-        // 去掉当前解析的字符
-        decodedHtml = decodedHtml.substring(str.length);
-        // 判断是否是自闭合标签
-        const selfClosing = selfClosingElementsMap.includes(name);
-        // 转换后的元素名
-        const elementName = this.formatElementName(name);
-        // 获取属性
-        const attrs = this.formatAttributes(attrString, elementName);
-        // 配置display属性
-        let display = blockElementsMap.includes(name) ? "block" : "inlineBlock";
-        if (attrs.display) {
-          display = attrs.display;
-        } else {
-          attrs.display = display;
-        }
-        // 将当前数据追加到数组
-        jsonData.push({
-          type: selfClosing ? "selfClosing" : "start",
-          name: elementName,
-          originName: name,
-          attrs,
-          display,
-        });
-        continue;
-      }
-
       // 如果是结束标签
       if (decodedHtml.indexOf("</") === 0) {
         const match = decodedHtml.match(endElementRegexp);
         if (!match) continue;
         const [str, name] = match;
+        // 去除当前匹配字符串的新字符串
+        const newStr = this.updateHtmlStr(decodedHtml, str);
         // 判断元素是否需要解析
-        if (this.isInvalidElement(name)) continue;
-        // 去掉当前解析的字符
-        decodedHtml = decodedHtml.substring(str.length);
+        if (this.isInvalidElement(name)) {
+          // 去掉当前解析的字符
+          decodedHtml = newStr;
+          continue;
+        }
+        decodedHtml = newStr;
         // 判断是否是自闭合标签
         const selfClosing = selfClosingElementsMap.includes(name);
         // 将当前数据追加到数组
@@ -171,6 +156,41 @@ export default class MiniParser {
           type: selfClosing ? "selfClosing" : "end",
           name: this.formatElementName(name),
           originName: name,
+        });
+        continue;
+      }
+
+      // 如果是起始标签
+      if (decodedHtml.indexOf("<") === 0) {
+        const match = decodedHtml.match(startElementRegexp);
+        if (!match) continue;
+        // 如果是起始标签，需要额外考虑属性
+        const [str, name, attrString = ""] = match;
+        // 去除当前匹配字符串的新字符串
+        const newStr = this.updateHtmlStr(decodedHtml, str);
+        // 判断元素是否需要解析
+        if (this.isInvalidElement(name)) {
+          // 去掉当前解析的字符
+          decodedHtml = newStr;
+          continue;
+        }
+        // 去掉当前解析的字符
+        decodedHtml = newStr;
+        // 判断是否是自闭合标签
+        const selfClosing = this.isSelfClosingElement(str, name);
+        // 转换后的元素名
+        const elementName = this.formatElementName(name);
+        // 获取属性
+        const attrs = this.formatAttributes(attrString, elementName);
+        // 配置display属性
+        let display = blockElementsMap.includes(name) ? "block" : "inline";
+        // 将当前数据追加到数组
+        jsonData.push({
+          type: selfClosing ? "selfClosing" : "start",
+          name: elementName,
+          originName: name,
+          attrs,
+          display,
         });
         continue;
       }
@@ -204,15 +224,20 @@ export default class MiniParser {
     const skeleton = [];
     while (count < jsonData.length) {
       const current = jsonData[count];
-      const miniParserId = `${parentId}_${count}_${current.name}`;
+      const id = `${parentId}_${count}_${current.name}`;
+      // 优化输出数据的type
+      const newType = ["start", "end"].includes(current.type)
+        ? "default"
+        : current.type;
       // 通过起始标签的genKey去寻找对应的闭合标签
       if (current.type === "start") {
         const endElementIndex = jsonData.findIndex(
           ({ type, genKey }) => type === "end" && genKey === current.genKey
         );
         skeleton.push({
-          miniParserId,
+          id,
           ...current,
+          type: newType,
           children: this.skeletonGenerator(
             jsonData.slice(count + 1, endElementIndex),
             count
@@ -220,7 +245,7 @@ export default class MiniParser {
         });
         count = endElementIndex + 1;
       } else {
-        skeleton.push({ miniParserId, ...current });
+        skeleton.push({ id, ...current, type: newType });
         count++;
       }
     }

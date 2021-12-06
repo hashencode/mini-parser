@@ -3,7 +3,8 @@
   "version": "0.0.10",
   "scripts": {
     "dev": "rollup -c ./rollup.dev.config.js --watch",
-    "build": "rollup -c ./rollup.build.config.js"
+    "build": "rollup -c ./rollup.build.config.js",
+    "test": "jest ./tests/index.test.js"
   },
   "miniprogram": "dist",
   "devDependencies": {

@@ -92,6 +92,10 @@ export const startElementRegexp =
 // 结束标签正则
 export const endElementRegexp = /^<\/([-A-Za-z0-9_]+)[^>]*>/;
 
+// 自闭合标签正则
+export const selfClosingElementRegexp =
+  /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/)>/;
+
 // 获取属性正则
 export const attributeRegexp =
   /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
