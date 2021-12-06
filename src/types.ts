@@ -1,5 +1,5 @@
 export interface AttrsMapType {
-  [key: string]: string;
+  [key: string]: string | boolean;
 }
 
 // 转换后的数据结构
@@ -7,7 +7,7 @@ export type JsonDataType = {
   type: string;
   name: string;
   originName?: string;
-  attrs?: { [key: string]: string };
+  attrs?: AttrsMapType;
   display?: string;
   genKey?: number;
   children?: JsonDataType[];
@@ -34,24 +34,23 @@ type ModeType =
 
 // 以下为配置项属性
 export interface CommonConfig {
-  clearAttrs?: string[]; // 需要被移除的属性，[]
+  validAttrs?: string[]; // 需要被解析的属性
   defaultClass: string; // 默认类名，mini-parser-*
+  format?: { [key: string]: (data: string) => string }; // 自定义属性格式化方法
+  custom?: boolean; // 使用自定义组件，false
 }
 
 export interface ImageConfig extends CommonConfig {
-  srcFormat?: (url: string) => string; // 自定义路径格式化方法
-  // 内置属性
+  // 小程序内置属性
   buildInAttrs: {
     lazyLoad: boolean; // 是否懒加载，false
-    mode: ModeType; //裁剪、缩放模式，"widthFix"
+    mode: ModeType; //裁剪、缩放模式，"scaleToFill"
     showMenu: boolean; // 是否显示分享菜单，false
-    webp: boolean; // 是否支持webp格式，true
+    webp: boolean; // 是否支持webp格式，false
   };
 }
 
 export interface TextConfig extends CommonConfig {
-  textFormat?: (text: string) => string; // 自定义文字格式化方法
-  // 内置属性
   buildInAttrs: {
     decode: boolean; // 是否解码，false
     space?: "ensp" | "emsp" | "nbsp"; // 显示连续空格
@@ -60,8 +59,6 @@ export interface TextConfig extends CommonConfig {
 }
 
 export interface VideoConfig extends CommonConfig {
-  srcFormat?: (url: string) => string; // 自定义路径格式化方法
-  // 内置属性
   buildInAttrs: {
     autoplay: boolean; // 自动播放，false
     controls: boolean; // 显示播放控件，true

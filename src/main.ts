@@ -9,7 +9,6 @@ import {
   needFormatNameElements,
   defaultIgnoreElementsMap,
   blockElementsMap,
-  elementsHaveSrcAttr,
   selfClosingElementRegexp,
 } from "./const";
 import {
@@ -70,11 +69,7 @@ export default class MiniParser {
         const args = Array.prototype.slice.call(arguments);
         if (args.length >= 3) {
           const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
-          attrsMap[name] = that.attributeProcessor(
-            name,
-            attrValue,
-            elementName
-          );
+          that.attributeProcessor(attrsMap, name, attrValue, elementName);
         }
         return "";
       }
@@ -91,31 +86,22 @@ export default class MiniParser {
 
   // 根据配置项处理属性
   attributeProcessor(
+    attrsMap: AttrsMapType,
     attrName: string,
     attrValue: string,
     elementName: validElementName
-  ): string {
+  ) {
     const config: any = this.config[elementName];
+    const { validAttrs } = config;
+    const isValid = Array.isArray(validAttrs) && validAttrs.includes(attrName);
 
-    // 如果属性值需要被清理
-    if ("clearAttrs" in config && config.clearAttrs.includes(elementName)) {
-      attrValue = "";
+    // 判断属性值是否需要被解析
+    if (!validAttrs || isValid) {
+      // 可用自定义处理方法进行格式化
+      const { format = {} } = config;
+      const handler = format[attrName];
+      attrsMap[attrName] = handler ? handler(attrValue) : attrValue;
     }
-
-    // 根据属性的类型进行处理
-    switch (attrName) {
-      case "src":
-        if (elementsHaveSrcAttr.includes(attrName)) {
-          const { srcFormat } = config[elementName];
-          return srcFormat ? srcFormat(attrValue) : attrValue;
-        }
-        return attrValue;
-      case "class":
-        const { defaultClass } = config;
-        return defaultClass ? `${defaultClass} ${attrValue}` : attrValue;
-    }
-
-    return attrValue;
   }
 
   // 将元素名进行转换
@@ -198,16 +184,18 @@ export default class MiniParser {
       // 寻找<符号，将之前的字符视为文字
       const index = decodedHtml.indexOf("<");
       const isExist = index < 0;
+      const textConfig = this.config.text;
       let text = isExist ? decodedHtml : decodedHtml.substring(0, index);
-      // 允许使用配置项的文字转换函数
-      const { textFormat } = this.config.text;
-      if (textFormat) text = textFormat(text);
       decodedHtml = isExist ? "" : decodedHtml.substring(index);
+      // 允许使用配置项的文字转换函数
+      const attrObj: { text?: string } = {};
+      // 自定义方法处理字符串
+      this.attributeProcessor(attrObj, "text", text, "text");
       jsonData.push({
         type: "text",
         name: "text",
-        text,
-        attrs: { class: this.config.text.defaultClass },
+        text: attrObj.text,
+        attrs: { ...textConfig.buildInAttrs },
       });
 
       // 防止超时阻碍进程

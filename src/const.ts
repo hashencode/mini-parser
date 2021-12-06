@@ -25,9 +25,6 @@ export const formatElementRules: { [key: string]: validElementName } = {
 // 需要被转换的元素
 export const needFormatNameElements = Object.keys(formatElementRules);
 
-// 有src属性的元素
-export const elementsHaveSrcAttr = ["image", "video"];
-
 // 默认配置项
 export const defaultConfig: ConfigType = {
   timeout: 2000,
@@ -35,11 +32,10 @@ export const defaultConfig: ConfigType = {
   delay: 0,
   image: {
     defaultClass: "mini-parser-image",
-    clearAttrs: [],
     // 内置属性
     buildInAttrs: {
-      mode: "widthFix",
-      webp: true,
+      mode: "scaleToFill",
+      webp: false,
       lazyLoad: false,
       showMenu: false,
     },
@@ -54,7 +50,6 @@ export const defaultConfig: ConfigType = {
   },
   video: {
     defaultClass: "mini-parser-video",
-    clearAttrs: [],
     // 内置属性
     buildInAttrs: {
       autoplay: false,
@@ -77,11 +72,9 @@ export const defaultConfig: ConfigType = {
   },
   view: {
     defaultClass: "mini-parser-view",
-    clearAttrs: [],
   },
   link: {
     defaultClass: "mini-parser-link",
-    clearAttrs: [],
   },
 };
 
