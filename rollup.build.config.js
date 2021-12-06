@@ -3,7 +3,6 @@ import typescript from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
 import del from "rollup-plugin-delete";
 import commonjs from "@rollup/plugin-commonjs";
-import copy from "rollup-plugin-copy";
 
 const config = {
   input: "src/main.ts",
@@ -24,9 +23,6 @@ const config = {
       babelHelpers: "runtime",
     }),
     terser(),
-    copy({
-      targets: [{ src: "component/miniParser", dest: "dist/component" }],
-    }),
   ],
 };
 
