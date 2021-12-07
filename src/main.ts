@@ -69,39 +69,32 @@ export default class MiniParser {
         const args = Array.prototype.slice.call(arguments);
         if (args.length >= 3) {
           const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
-          that.attributeProcessor(attrsMap, name, attrValue, elementName);
+          attrsMap[name] = that.attributeProcessor(
+            name,
+            attrValue,
+            elementName
+          );
         }
         return "";
       }
     );
 
-    // 追加小程序元素的内置属性
-    let buildInAttrs = {};
-    const current = this.config[elementName];
-    if ("buildInAttrs" in current) {
-      buildInAttrs = current.buildInAttrs;
-    }
-    return { ...attrsMap, ...buildInAttrs };
+    return attrsMap;
   }
 
   // 根据配置项处理属性
   attributeProcessor(
-    attrsMap: AttrsMapType,
     attrName: string,
     attrValue: string,
     elementName: validElementName
   ) {
-    const config: any = this.config[elementName];
-    const { validAttrs } = config;
-    const isValid = Array.isArray(validAttrs) && validAttrs.includes(attrName);
-
-    // 判断属性值是否需要被解析
-    if (!validAttrs || isValid) {
+    if (elementName in this.config) {
+      const { format = {} }: any = this.config[elementName];
       // 可用自定义处理方法进行格式化
-      const { format = {} } = config;
       const handler = format[attrName];
-      attrsMap[attrName] = handler ? handler(attrValue) : attrValue;
+      return handler ? handler(attrValue) : attrValue;
     }
+    return attrValue;
   }
 
   // 将元素名进行转换
@@ -184,18 +177,13 @@ export default class MiniParser {
       // 寻找<符号，将之前的字符视为文字
       const index = decodedHtml.indexOf("<");
       const isExist = index < 0;
-      const textConfig = this.config.text;
       let text = isExist ? decodedHtml : decodedHtml.substring(0, index);
       decodedHtml = isExist ? "" : decodedHtml.substring(index);
-      // 允许使用配置项的文字转换函数
-      const attrObj: { text?: string } = {};
-      // 自定义方法处理字符串
-      this.attributeProcessor(attrObj, "text", text, "text");
       jsonData.push({
         type: "text",
         name: "text",
-        text: attrObj.text,
-        attrs: { ...textConfig.buildInAttrs },
+        // 允许使用配置项的文字转换函数
+        text: this.attributeProcessor("text", text, "text"),
       });
 
       // 防止超时阻碍进程

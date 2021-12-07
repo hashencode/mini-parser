@@ -30,52 +30,6 @@ export const defaultConfig: ConfigType = {
   timeout: 2000,
   ignoredElement: defaultIgnoreElementsMap,
   delay: 0,
-  image: {
-    defaultClass: "mini-parser-image",
-    // 内置属性
-    buildInAttrs: {
-      mode: "scaleToFill",
-      webp: false,
-      lazyLoad: false,
-      showMenu: false,
-    },
-  },
-  text: {
-    defaultClass: "mini-parser-text",
-    // 内置属性
-    buildInAttrs: {
-      decode: false,
-      userSelect: false,
-    },
-  },
-  video: {
-    defaultClass: "mini-parser-video",
-    // 内置属性
-    buildInAttrs: {
-      autoplay: false,
-      controls: true,
-      enablePlayGesture: false,
-      enableProgressGesture: true,
-      loop: false,
-      muted: false,
-      objectFit: "contain",
-      playBtnPosition: "bottom",
-      showCastingButton: false,
-      showCenterPlayBtn: true,
-      showFullscreenBtn: true,
-      showMuteBtn: false,
-      showPlayBtn: true,
-      showProgress: true,
-      vslideGesture: false,
-      vslideGestureInFullscreen: true,
-    },
-  },
-  view: {
-    defaultClass: "mini-parser-view",
-  },
-  link: {
-    defaultClass: "mini-parser-link",
-  },
 };
 
 // 起始标签正则

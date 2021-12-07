@@ -2,54 +2,27 @@
   <block wx:for="{{parserData}}" wx:key="id">
     <!-- 文字 -->
     <text wx:if="{{item.name==='text'}}"
-          class="{{config.defaultClass}} {{item.attrs.class}}"
-          decode="{{item.attrs.decode}}"
-          space="{{item.attrs.space}}"
-          user-select="{{item.attrs.userSelect}}">
+          class="mini-parser-text {{item.attrs.class}}">
       {{item.text}}
     </text>
 
     <!-- 图片 -->
     <image wx:if="{{item.name==='image'}}"
-           class="{{config.defaultClass}} {{item.attrs.class}}"
-           style="{{item.attrs.style}}"
-           lazy-load="{{item.attrs.lazyLoad}}"
-           mode="{{item.attrs.mode}}"
-           show-menu-by-longpress="{{item.attrs.showMenu}}"
-           webp="{{item.attrs.webp}}"></image>
+           class="mini-parser-image {{item.attrs.class}}"
+           style="{{item.attrs.style}}"></image>
 
     <!-- 视频 -->
     <video wx:if="{{item.name==='video'}}"
-           class="{{config.defaultClass}} {{item.attrs.class}}"
-           style="{{item.attrs.style}}"
-           autoplay="{{item.attrs.autoplay}}"
-           controls="{{item.attrs.controls}}"
-           direction="{{item.attrs.direction}}"
-           enable-play-gesture="{{item.attrs.enablePlayGesture}}"
-           enable-progress-gesture="{{item.attrs.enableProgressGesture}}"
-           loop="{{item.attrs.loop}}"
-           muted="{{item.attrs.muted}}"
-           object-fit="{{item.attrs.objectFit}}"
-           play-btn-position="{{item.attrs.playBtnPosition}}"
-           poster="{{item.attrs.poster}}"
-           show-casting-button="{{item.attrs.showCastingButton}}"
-           show-center-play-btn="{{item.attrs.showCenterPlayBtn}}"
-           show-fullscreen-btn="{{item.attrs.showFullscreenBtn}}"
-           show-mute-btn="{{item.attrs.showMuteBtn}}"
-           show-play-btn="{{item.attrs.showPlayBtn}}"
-           show-progress="{{item.attrs.showProgress}}"
-           title="{{item.attrs.title}}"
-           vslide-gesture="{{item.attrs.vslideGesture}}"
-           vslide-gesture-in-fullscreen="{{item.attrs.vslideGestureInFullscreen}}"></video>
+           class="mini-parser-video {{item.attrs.class}}"
+           style="{{item.attrs.style}}"></video>
 
     <!-- 链接 -->
     <view wx:if="{{item.name==='link'}}"
-          class="{{config.defaultClass}} {{item.attrs.class}}"
-          bind:tap="item.onTap"></view>
+          class="mini-parser-link {{item.attrs.class}}"></view>
 
     <!-- 默认 -->
     <view wx:else
-          class="{{config.defaultClass}} {{item.attrs.class}}"
+          class="mini-parser-view {{item.attrs.class}}"
           style="{{item.attrs.style}}">
       <miniParser wx:if="{{item.children}}" htmlStr="{{item.children}}"></miniParser>
     </view>

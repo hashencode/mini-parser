@@ -14,10 +14,9 @@ Component({
   observers: {
     htmlStr(htmlStr) {
       if (!htmlStr) return;
-      const data =
-        typeof htmlStr === "string"
-          ? new MiniParser(htmlStr, this.data.config)
-          : htmlStr;
+      const data = Array.isArray(htmlStr)
+        ? htmlStr
+        : new MiniParser(htmlStr, this.data.config);
       this.setData({
         parserData: data,
       });
