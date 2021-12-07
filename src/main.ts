@@ -71,10 +71,15 @@ export default class MiniParser {
     elementName: validElementName
   ) {
     if (elementName in this.config) {
-      const { format = {} }: any = this.config[elementName];
-      // 可用自定义处理方法进行格式化
-      const handler = format[attrName];
-      return handler ? handler(attrValue) : attrValue;
+      const { format = {}, validAttrs }: any = this.config[elementName];
+      const isValid =
+        Array.isArray(validAttrs) && validAttrs.includes(attrName);
+      if (!validAttrs || isValid) {
+        // 可用自定义处理方法进行格式化
+        const handler = format[attrName];
+        return handler ? handler(attrValue) : attrValue;
+      }
+      return "INVALID";
     }
     return attrValue;
   }
@@ -90,11 +95,16 @@ export default class MiniParser {
         const args = Array.prototype.slice.call(arguments);
         if (args.length >= 3) {
           const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
-          attrsMap[name] = that.attributeProcessor(
+          // 将属性值进行格式化
+          const formatValue = that.attributeProcessor(
             name,
             attrValue,
             elementName
           );
+          // 剔除不必要的属性
+          if (formatValue !== "INVALID") {
+            attrsMap[name] = formatValue;
+          }
         }
         return "";
       }
@@ -104,10 +114,10 @@ export default class MiniParser {
   }
 
   // 获取覆写属性
-  getRewriteAttrs(elementName: validElementName) {
+  getOverwriteAttrs(elementName: validElementName) {
     const elementConfig = this.config[elementName];
-    if (elementConfig && elementConfig.rewriteAttrs) {
-      return elementConfig.rewriteAttrs;
+    if (elementConfig && elementConfig.overwriteAttrs) {
+      return elementConfig.overwriteAttrs;
     }
     return {};
   }
@@ -171,7 +181,7 @@ export default class MiniParser {
         // 获取属性
         const attrs = this.formatAttributes(attrString, elementName);
         // 获取覆写属性
-        const rewriteAttrs = this.getRewriteAttrs(elementName);
+        const overwriteAttrs = this.getOverwriteAttrs(elementName);
         // 配置display属性
         let display = blockElementsMap.includes(name) ? "block" : "inline";
         // 将当前数据追加到数组
@@ -179,7 +189,7 @@ export default class MiniParser {
           type: selfClosing ? "selfClosing" : "start",
           name: elementName,
           originName: name,
-          attrs: { ...attrs, ...rewriteAttrs },
+          attrs: { ...attrs, ...overwriteAttrs },
           display,
         });
         continue;

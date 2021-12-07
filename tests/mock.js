@@ -137,9 +137,10 @@ test word 123 $%#@
     ignoredElement: [],
     delay: 0,
     image: {
-      rewriteAttrs: {
+      overwriteAttrs: {
         id: "rewrite-id",
       },
+      validAttrs: ["src", "class"],
       format: { src: (data) => data.replace("xxx", "zzz") },
     },
     text: {
@@ -156,7 +157,6 @@ test word 123 $%#@
         class: "test-class",
         id: "rewrite-id",
         src: "https://zzz.com",
-        alt: "",
       },
       display: "inline",
     },

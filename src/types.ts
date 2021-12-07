@@ -18,7 +18,8 @@ export type validElementName = "image" | "video" | "text" | "view" | "link";
 
 // 公用配置项
 export interface CommonConfig {
-  rewriteAttrs?: { [key: string]: any }; // 覆写原属性
+  validAttrs?: string[]; // 不在数组内的属性不会被解析
+  overwriteAttrs?: { [key: string]: any }; // 覆写原属性
   format?: { [key: string]: (data: string) => string }; // 自定义属性格式化方法
 }
 
