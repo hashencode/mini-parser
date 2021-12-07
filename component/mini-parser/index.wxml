@@ -13,14 +13,18 @@
            style="{{item.attrs.style}}"></image>
 
     <!-- 视频 -->
-    <video wx:if="{{item.name==='video'}}"
+    <video wx:elif="{{item.name==='video'}}"
            class="mini-parser-video {{item.attrs.class}}"
            src="{{item.attrs.src}}"
            style="{{item.attrs.style}}"></video>
 
     <!-- 链接 -->
-    <view wx:if="{{item.name==='link'}}"
-          class="mini-parser-link {{item.attrs.class}}"></view>
+    <view wx:elif="{{item.name==='link'}}"
+          class="mini-parser-link {{item.attrs.class}}"
+          data-attrs="{{item.attrs}}"
+          bind:tap="handleLinkTap">
+      <mini-parser wx:if="{{item.children}}" htmlStr="{{item.children}}"></mini-parser>
+    </view>
 
     <!-- 默认 -->
     <view wx:else

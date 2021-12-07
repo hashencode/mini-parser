@@ -22,5 +22,11 @@ Component({
       });
     },
   },
-  methods: {},
+  methods: {
+    // 处理链接点击
+    handleLinkTap(ev) {
+      const { href } = ev.currentTarget.dataset.attrs;
+      if (href) console.log(href);
+    },
+  },
 });
