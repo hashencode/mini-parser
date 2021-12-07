@@ -9,11 +9,13 @@
     <!-- 图片 -->
     <image wx:if="{{item.name==='image'}}"
            class="mini-parser-image {{item.attrs.class}}"
+           src="{{item.attrs.src}}"
            style="{{item.attrs.style}}"></image>
 
     <!-- 视频 -->
     <video wx:if="{{item.name==='video'}}"
            class="mini-parser-video {{item.attrs.class}}"
+           src="{{item.attrs.src}}"
            style="{{item.attrs.style}}"></video>
 
     <!-- 链接 -->
@@ -24,11 +26,7 @@
     <view wx:else
           class="mini-parser-view {{item.attrs.class}}"
           style="{{item.attrs.style}}">
-      <miniParser wx:if="{{item.children}}" htmlStr="{{item.children}}"></miniParser>
+      <mini-parser wx:if="{{item.children}}" htmlStr="{{item.children}}"></mini-parser>
     </view>
-
   </block>
 </block>
-
-
-

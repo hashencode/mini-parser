@@ -58,6 +58,27 @@ export default class MiniParser {
     );
   }
 
+  // 将元素名进行转换
+  formatElementName(name: string): validElementName {
+    if (needFormatNameElements.includes(name)) return formatElementRules[name];
+    return "view";
+  }
+
+  // 根据配置项处理属性
+  attributeProcessor(
+    attrName: string,
+    attrValue: string,
+    elementName: validElementName
+  ) {
+    if (elementName in this.config) {
+      const { format = {} }: any = this.config[elementName];
+      // 可用自定义处理方法进行格式化
+      const handler = format[attrName];
+      return handler ? handler(attrValue) : attrValue;
+    }
+    return attrValue;
+  }
+
   // 将属性字符串转为对象
   formatAttributes(str: string, elementName: validElementName): AttrsMapType {
     if (!str) return {};
@@ -82,25 +103,13 @@ export default class MiniParser {
     return attrsMap;
   }
 
-  // 根据配置项处理属性
-  attributeProcessor(
-    attrName: string,
-    attrValue: string,
-    elementName: validElementName
-  ) {
-    if (elementName in this.config) {
-      const { format = {} }: any = this.config[elementName];
-      // 可用自定义处理方法进行格式化
-      const handler = format[attrName];
-      return handler ? handler(attrValue) : attrValue;
+  // 获取覆写属性
+  getRewriteAttrs(elementName: validElementName) {
+    const elementConfig = this.config[elementName];
+    if (elementConfig && elementConfig.rewriteAttrs) {
+      return elementConfig.rewriteAttrs;
     }
-    return attrValue;
-  }
-
-  // 将元素名进行转换
-  formatElementName(name: string): validElementName {
-    if (needFormatNameElements.includes(name)) return formatElementRules[name];
-    return "view";
+    return {};
   }
 
   // 更新解析字符串
@@ -161,6 +170,8 @@ export default class MiniParser {
         const elementName = this.formatElementName(name);
         // 获取属性
         const attrs = this.formatAttributes(attrString, elementName);
+        // 获取覆写属性
+        const rewriteAttrs = this.getRewriteAttrs(elementName);
         // 配置display属性
         let display = blockElementsMap.includes(name) ? "block" : "inline";
         // 将当前数据追加到数组
@@ -168,7 +179,7 @@ export default class MiniParser {
           type: selfClosing ? "selfClosing" : "start",
           name: elementName,
           originName: name,
-          attrs,
+          attrs: { ...attrs, ...rewriteAttrs },
           display,
         });
         continue;

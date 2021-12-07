@@ -1,6 +1,6 @@
 {
   "component": true,
   "usingComponents": {
-    "miniParser": "./index"
+    "mini-parser": "./index"
   }
 }
