@@ -44,9 +44,10 @@ export default class MiniParser {
 
   // 是否为合规元素
   isInvalidElement(name: string): boolean {
+    const { ignoredElement } = this.config;
     return (
       defaultIgnoreElementsMap.includes(name) ||
-      this.config.ignoredElement.includes(name)
+      !!(ignoredElement && ignoredElement.includes(name))
     );
   }
 
@@ -129,7 +130,8 @@ export default class MiniParser {
 
   // 解析html字符串并转为json结构
   htmlToJson(decodedHtml: string) {
-    const maxTime = Date.now() + this.config.timeout;
+    const { timeout = 2000 } = this.config;
+    const maxTime = Date.now() + timeout;
     const jsonData = [];
 
     while (decodedHtml) {

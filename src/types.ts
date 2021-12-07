@@ -26,7 +26,7 @@ export interface CommonConfig {
 export type ConfigType = {
   [key in validElementName]?: CommonConfig;
 } & {
-  timeout: number; // 解析超时毫秒数，1000
-  ignoredElement: string[]; // 忽略解析的元素类型，[]
-  delay: number; // 延迟解析毫秒数，0
+  timeout?: number; // 解析超时毫秒数，1000
+  ignoredElement?: string[]; // 忽略解析的元素类型，[]
+  delay?: number; // 延迟解析毫秒数，0
 };
