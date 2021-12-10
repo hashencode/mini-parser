@@ -233,6 +233,17 @@ export default class MiniParser {
         const endElementIndex = jsonData.findIndex(
           ({ type, genKey }) => type === "end" && genKey === current.genKey
         );
+        // 如果找不到对应的闭合标签，则抛出错误并跳出循环
+        if (endElementIndex === -1) {
+          const { onError } = this.config;
+          if (onError) {
+            onError({
+              message: "can't find closure, please check html string.",
+              code: 0,
+            });
+          }
+          break;
+        }
         skeleton.push({
           id,
           ...current,

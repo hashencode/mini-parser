@@ -168,3 +168,12 @@ test word 123 $%#@
     },
   ],
 };
+
+exports.errorHtmlString = {
+  desc: "error html string",
+  html: `
+<div>
+<div></div>
+`,
+  except: [],
+};
