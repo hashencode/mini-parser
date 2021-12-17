@@ -5,7 +5,7 @@ import typescript from "@rollup/plugin-typescript";
 const config = {
   input: "src/dev.ts",
   output: {
-    file: "server/index.js",
+    file: "server_build/index.js",
     format: "es",
     sourcemap: true,
   },

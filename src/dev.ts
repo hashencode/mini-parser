@@ -1,4 +1,4 @@
-import MiniParser from "./main";
+import { MiniParser } from "./main";
 
 const htmlStr = `
 <div></div>

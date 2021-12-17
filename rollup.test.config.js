@@ -7,12 +7,12 @@ import commonjs from "@rollup/plugin-commonjs";
 const config = {
   input: "src/main.ts",
   output: {
-    file: "dist/index.js",
-    format: "es",
+    file: "test_build/index.js",
+    format: "cjs",
     sourcemap: false,
   },
   plugins: [
-    del({ targets: "dist/*" }),
+    del({ targets: "test_build/*" }),
     typescript({
       sourceMap: false,
     }),

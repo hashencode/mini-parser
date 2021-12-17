@@ -140,8 +140,9 @@ test word 123 $%#@
       overwriteAttrs: {
         id: "rewrite-id",
       },
-      validAttrs: ["src", "class"],
-      format: { src: (data) => data.replace("xxx", "zzz") },
+      format: {
+        src: (data) => data.replace("xxx", "zzz"),
+      },
     },
     text: {
       format: { text: (data) => data.replace(/123/g, "一二三") },
@@ -157,6 +158,7 @@ test word 123 $%#@
         class: "test-class",
         id: "rewrite-id",
         src: "https://zzz.com",
+        alt: "",
       },
       display: "inline",
     },

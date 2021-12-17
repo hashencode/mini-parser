@@ -4,7 +4,7 @@ const {
   config,
   errorHtmlString,
 } = require("./mock");
-const MiniParser = require("../dist");
+const { MiniParser } = require("../test_build");
 
 // 测试各种类型的元素的解析
 test(elementType.desc, () => {

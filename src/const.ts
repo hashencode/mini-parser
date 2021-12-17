@@ -1,19 +1,19 @@
-import { ConfigType, validElementName } from "./types";
+import { validElementName } from "./types";
 
 // 不合规元素
-const defaultIgnoreElements =
+const defaultIgnoreElementString =
   "area,base,canvas,embed,frame,head,iframe,input,link,map,meta,param,rp,script,source,style,textarea,title,track,wbr";
-export const defaultIgnoreElementsMap = defaultIgnoreElements.split(",");
+export const defaultIgnoreElements = defaultIgnoreElementString.split(",");
 
 // 自闭合标签
-const selfClosingElements =
+const selfClosingElementString =
   "area,base,br,col,circle,ellipse,embed,frame,hr,img,input,line,link,meta,param,path,polygon,rect,source,track,use,wbr";
-export const selfClosingElementsMap = selfClosingElements.split(",");
+export const selfClosingElements = selfClosingElementString.split(",");
 
 // 块级元素标签
-const blockElements =
+const blockElementString =
   "address,article,aside,blockquote,dd,div,dl,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ol,p,pre,section,table,ul";
-export const blockElementsMap = blockElements.split(",");
+export const blockElements = blockElementString.split(",");
 
 // 元素名称转换规则
 export const formatElementRules: { [key: string]: validElementName } = {
@@ -25,11 +25,16 @@ export const formatElementRules: { [key: string]: validElementName } = {
 // 需要被转换的元素
 export const needFormatNameElements = Object.keys(formatElementRules);
 
-// 默认配置项
-export const defaultConfig: ConfigType = {
-  timeout: 2000,
-  ignoredElement: defaultIgnoreElementsMap,
-  delay: 0,
+// 错误表
+export const errorMap = {
+  htmlToJson: {
+    message: "can't parser html string to json",
+    code: 0,
+  },
+  closure: {
+    message: "can't find closure, please check html string.",
+    code: 1,
+  },
 };
 
 // 起始标签正则
