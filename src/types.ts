@@ -13,24 +13,15 @@ export type JsonDataType = {
   children?: JsonDataType[];
 }[];
 
-// 配置中出现的元素名
-export type validElementName = "image" | "video" | "text" | "view" | "link";
-
-// 元素配置项
-export interface ElementConfig {
-  overwriteAttrs?: { [key: string]: any }; // 覆写原属性
-  format?: { [key: string]: (data: string) => string }; // 自定义属性格式化方法
-}
-
 // 配置项
 export type ConfigType = {
-  [key in validElementName]?: ElementConfig;
-} & {
   ignoredElement?: string[]; // 忽略解析的元素类型，[]
-  delay?: number; // 延迟解析毫秒数，0
-  onError?: (msg: ParserErrorEvent) => any;
+  format?: { [key: string]: { [key: string]: any } }; // 属性格式化
+  transMap?: { [key: string]: string }; // 元素转换对应表
+  onError?: (msg: ParserErrorEvent) => any; // 错误回调
 };
 
+// 错误类型
 export type ErrorType = "htmlToJson" | "closure";
 
 // 解析错误信息

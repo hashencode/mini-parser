@@ -3,21 +3,14 @@ import {
   blockElements,
   decodeRegexp,
   defaultIgnoreElements,
+  defaultTransMap,
   endElementRegexp,
   errorMap,
-  formatElementRules,
-  needFormatNameElements,
   selfClosingElementRegexp,
   selfClosingElements,
   startElementRegexp,
 } from "./const";
-import {
-  AttrsMapType,
-  ConfigType,
-  ErrorType,
-  JsonDataType,
-  validElementName,
-} from "./types";
+import { AttrsMapType, ConfigType, ErrorType, JsonDataType } from "./types";
 
 class MiniParser {
   private readonly config;
@@ -57,58 +50,54 @@ class MiniParser {
   }
 
   // 将元素名进行转换
-  formatElementName(name: string): validElementName {
-    if (needFormatNameElements.includes(name)) return formatElementRules[name];
+  formatElementName(name: string): string {
+    const { transMap = defaultTransMap } = this.config;
+    if (name in transMap) return transMap[name];
     return "view";
   }
 
   // 根据配置项处理属性
   attributeProcessor(
-    attrName: string,
-    attrValue: string,
-    elementName: validElementName
-  ) {
-    if (elementName in this.config) {
-      const { format = {} }: any = this.config[elementName];
-      // 可用自定义处理方法进行格式化
-      const handler = format[attrName];
-      return handler ? handler(attrValue) : attrValue;
+    attrsMap: { [key: string]: any },
+    elementName: string
+  ): AttrsMapType {
+    const { format = {} } = this.config;
+    // 如果存在对应的格式化配置
+    if (format[elementName]) {
+      // 对应元素配置项
+      const formatConfig = format[elementName];
+      // 设置/调用每一个配置项
+      Object.keys(formatConfig).forEach((item) => {
+        const formatFactory = formatConfig[item];
+        // 如果是配置项是函数，则调用，若为其他则直接赋值
+        if (typeof formatFactory === "function") {
+          attrsMap[item] = formatFactory(attrsMap[item]);
+        } else {
+          attrsMap[item] = formatFactory;
+        }
+      });
     }
-    return attrValue;
+    return attrsMap;
   }
 
   // 将属性字符串转为对象
-  formatAttributes(str: string, elementName: validElementName): AttrsMapType {
+  formatAttributes(str: string, elementName: string): AttrsMapType {
     if (!str) return {};
-    const that = this;
+    // 正则匹配属性
     let attrsMap: AttrsMapType = {};
     str.replace(
       attributeRegexp,
       function (_match, name: string, value: string) {
         const args = Array.prototype.slice.call(arguments);
         if (args.length >= 3) {
-          const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
           // 将属性值进行格式化
-          attrsMap[name] = that.attributeProcessor(
-            name,
-            attrValue,
-            elementName
-          );
+          console.log(value);
+          attrsMap[name] = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
         }
         return "";
       }
     );
-
-    return attrsMap;
-  }
-
-  // 获取覆写属性
-  getOverwriteAttrs(elementName: validElementName) {
-    const elementConfig = this.config[elementName];
-    if (elementConfig && elementConfig.overwriteAttrs) {
-      return elementConfig.overwriteAttrs;
-    }
-    return {};
+    return this.attributeProcessor(attrsMap, elementName);
   }
 
   // 更新解析字符串
@@ -165,20 +154,16 @@ class MiniParser {
           decodedHtml = newStr;
           // 判断是否是自闭合标签
           const selfClosing = this.isSelfClosingElement(str, name);
-          // 转换后的元素名
-          const elementName = this.formatElementName(name);
           // 获取属性
-          const attrs = this.formatAttributes(attrString, elementName);
-          // 获取覆写属性
-          const overwriteAttrs = this.getOverwriteAttrs(elementName);
+          const attrs = this.formatAttributes(attrString, name);
           // 配置display属性
           let display = blockElements.includes(name) ? "block" : "inline";
           // 将当前数据追加到数组
           jsonData.push({
             type: selfClosing ? "selfClosing" : "start",
-            name: elementName,
+            name: this.formatElementName(name),
             originName: name,
-            attrs: { ...attrs, ...overwriteAttrs },
+            attrs,
             display,
           });
           continue;
@@ -187,17 +172,18 @@ class MiniParser {
         // 寻找<符号，将之前的字符视为文字
         const index = decodedHtml.indexOf("<");
         const isExist = index < 0;
-        let text = isExist ? decodedHtml : decodedHtml.substring(0, index);
+        let content = isExist ? decodedHtml : decodedHtml.substring(0, index);
         decodedHtml = isExist ? "" : decodedHtml.substring(index);
         jsonData.push({
           type: "text",
           name: "text",
           // 允许使用配置项的文字转换函数
-          text: this.attributeProcessor("text", text, "text"),
+          attrs: this.attributeProcessor({ content }, "text"),
         });
       }
     } catch (ev) {
       this.emitError("htmlToJson");
+      console.error(ev);
     }
 
     return jsonData;
@@ -271,7 +257,8 @@ class MiniParser {
   emitError(type: ErrorType) {
     const { onError } = this.config;
     if (onError) onError(errorMap[type]);
+    console.error(`MiniParser: ${errorMap[type].message}`);
   }
 }
 
-export { MiniParser, defaultIgnoreElements };
+export { MiniParser, defaultIgnoreElements, defaultTransMap };

@@ -82,7 +82,9 @@ exports.elementType = {
       id: "0_11_text",
       type: "text",
       name: "text",
-      text: "汉字Aa01!@#$%",
+      attrs: {
+        content: "汉字Aa01!@#$%",
+      },
     },
   ],
 };
@@ -131,32 +133,31 @@ exports.config = {
   html: `
 <img class="test-class" id="img-id" src="https://xxx.com" alt="">
 test word 123 $%#@
+<br/>
 `,
   config: {
-    timeout: 2000,
-    ignoredElement: [],
-    delay: 0,
-    image: {
-      overwriteAttrs: {
-        id: "rewrite-id",
-      },
-      format: {
+    format: {
+      img: {
         src: (data) => data.replace("xxx", "zzz"),
+        id: "overwrite-id",
+      },
+      text: {
+        content: (data) => data.replace(/123/g, "一二三"),
       },
     },
-    text: {
-      format: { text: (data) => data.replace(/123/g, "一二三") },
+    transMap: {
+      br: "rich-text",
     },
   },
   except: [
     {
-      id: "0_0_image",
+      id: "0_0_view",
       type: "selfClosing",
-      name: "image",
+      name: "view",
       originName: "img",
       attrs: {
         class: "test-class",
-        id: "rewrite-id",
+        id: "overwrite-id",
         src: "https://zzz.com",
         alt: "",
       },
@@ -166,7 +167,17 @@ test word 123 $%#@
       id: "0_1_text",
       type: "text",
       name: "text",
-      text: "test word 一二三 $%#@",
+      attrs: {
+        content: "test word 一二三 $%#@",
+      },
+    },
+    {
+      id: "0_2_rich-text",
+      type: "selfClosing",
+      name: "rich-text",
+      originName: "br",
+      attrs: {},
+      display: "inline",
     },
   ],
 };

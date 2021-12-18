@@ -1,5 +1,3 @@
-import { validElementName } from "./types";
-
 // 不合规元素
 const defaultIgnoreElementString =
   "area,base,canvas,embed,frame,head,iframe,input,link,map,meta,param,rp,script,source,style,textarea,title,track,wbr";
@@ -15,15 +13,12 @@ const blockElementString =
   "address,article,aside,blockquote,dd,div,dl,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ol,p,pre,section,table,ul";
 export const blockElements = blockElementString.split(",");
 
-// 元素名称转换规则
-export const formatElementRules: { [key: string]: validElementName } = {
+// 默认元素转换对应表
+export const defaultTransMap = {
   img: "image",
   video: "video",
   a: "link",
 };
-
-// 需要被转换的元素
-export const needFormatNameElements = Object.keys(formatElementRules);
 
 // 错误表
 export const errorMap = {
