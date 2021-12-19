@@ -20,18 +20,6 @@ export const defaultTransMap = {
   a: "link",
 };
 
-// 错误表
-export const errorMap = {
-  htmlToJson: {
-    message: "can't parser html string to json",
-    code: 0,
-  },
-  closure: {
-    message: "can't find closure, please check html string.",
-    code: 1,
-  },
-};
-
 // 起始标签正则
 export const startElementRegexp =
   /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/;
