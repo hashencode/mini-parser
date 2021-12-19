@@ -1,6 +1,15 @@
+// 元素属性类型
 export interface AttrsMapType {
   [key: string]: string | boolean;
 }
+
+// 转义字典类型
+export interface decodeMapType {
+  [key: string]: string;
+}
+
+// html专属元素正则类型
+export type htmlOnlyType = [RegExp, string][];
 
 // 转换后的数据结构
 export type JsonDataType = {

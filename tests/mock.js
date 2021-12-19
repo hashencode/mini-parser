@@ -1,121 +1,58 @@
 exports.elementType = {
   desc: "element type",
-  html: `
-<!--ignore element-->
-<head />
-<title></title>
-<!--selfClosing element-->
-<br/><div/>
-<!--block element-->
-<article></article><span></span>
-<!--format element-->
-<video></video><img/><a></a>
-<!--text element-->
-汉字Aa01!@#$%
-`,
+  html: "<!--hello--><head /><title></title><br/><div/><video></video><img/>汉字Aa01!@#$%",
   except: [
     {
       id: "0_0_view",
-      type: "selfClosing",
       name: "view",
       originName: "br",
       attrs: {},
       display: "inline",
+      type: "selfClosing",
     },
     {
       id: "0_1_view",
-      type: "selfClosing",
       name: "view",
       originName: "div",
       attrs: {},
       display: "block",
+      type: "selfClosing",
     },
     {
-      id: "0_2_view",
-      type: "default",
-      name: "view",
-      originName: "article",
-      attrs: {},
-      display: "block",
-      genKey: 2,
-      children: [],
-    },
-    {
-      id: "0_4_view",
-      type: "default",
-      name: "view",
-      originName: "span",
-      attrs: {},
-      display: "inline",
-      genKey: 4,
-      children: [],
-    },
-    {
-      id: "0_6_video",
-      type: "default",
+      id: "0_2_video",
       name: "video",
       originName: "video",
       attrs: {},
       display: "inline",
-      genKey: 6,
+      type: "default",
       children: [],
     },
     {
-      id: "0_8_image",
-      type: "selfClosing",
+      id: "0_4_image",
       name: "image",
       originName: "img",
       attrs: {},
       display: "inline",
+      type: "selfClosing",
     },
     {
-      id: "0_9_link",
-      type: "default",
-      name: "link",
-      originName: "a",
-      attrs: {},
-      display: "inline",
-      genKey: 9,
-      children: [],
-    },
-    {
-      id: "0_11_text",
-      type: "text",
+      id: "0_5_text",
       name: "text",
       originName: "text",
       attrs: {
         content: "汉字Aa01!@#$%",
       },
+      type: "text",
     },
   ],
 };
 
 exports.elementAttrs = {
   desc: "element attrs",
-  html: `
-<div class="test-class" id="test-id" style="display: flex;align-items: center" width="100px" noValue></div>
-<img class="test-class" id="test-id" src="https://xxx.com" alt="">
-`,
+  html: '<img class="test-class" id="test-id" src="https://xxx.com" alt="">',
   except: [
     {
-      id: "0_0_view",
-      type: "default",
-      name: "view",
-      originName: "div",
-      attrs: {
-        class: "test-class",
-        id: "test-id",
-        style: "display: flex;align-items: center",
-        width: "100px",
-        noValue: "",
-      },
-      display: "block",
-      genKey: 0,
-      children: [],
-    },
-    {
-      id: "0_2_image",
-      type: "selfClosing",
+      id: "0_0_image",
       name: "image",
       originName: "img",
       attrs: {
@@ -125,17 +62,14 @@ exports.elementAttrs = {
         alt: "",
       },
       display: "inline",
+      type: "selfClosing",
     },
   ],
 };
 
 exports.config = {
   desc: "config",
-  html: `
-<img class="test-class" id="img-id" src="https://xxx.com" alt="">
-test word 123 $%#@
-<br/>
-`,
+  html: '<img class="test-class" id="img-id" src="https://xxx.com" alt="">test word 123 $%#@<br/>',
   config: {
     format: {
       img: {
@@ -186,8 +120,6 @@ test word 123 $%#@
 
 exports.specialHtml = {
   desc: "special html string",
-  html: `
-<div>
-`,
+  html: "<div>",
   except: [],
 };

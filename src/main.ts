@@ -1,10 +1,11 @@
 import {
   attributeRegexp,
   blockElements,
-  decodeRegexp,
+  decodeMap,
   defaultIgnoreElements,
   defaultTransMap,
   endElementRegexp,
+  htmlOnlyRegexp,
   selfClosingElementRegexp,
   selfClosingElements,
   startElementRegexp,
@@ -19,44 +20,79 @@ class MiniParser {
   }
 
   // 处理步骤
-  steps(htmlStr: string) {
-    const decodedHtml = this.decodeHtml(htmlStr);
+  public steps(htmlStr: string) {
+    const cleanHtml = this.cleanHtml(htmlStr);
+    const decodedHtml = this.decodeHtml(cleanHtml, false);
     const jsonData = this.htmlToJson(decodedHtml);
     return this.jsonToSkeleton(jsonData);
   }
 
-  // 替换被转义的字符串
-  decodeHtml(htmlStr: string) {
+  public cleanHtml(htmlStr: string) {
     if (!htmlStr) return "";
-    decodeRegexp.forEach((item) => {
+    htmlOnlyRegexp.forEach((item) => {
       const [_regexp, replacement] = item;
       htmlStr = htmlStr.replace(_regexp, replacement);
     });
     return htmlStr;
   }
 
+  // 替换被转义的字符串
+  public decodeHtml(htmlStr: string, encodeAmp: boolean) {
+    if (!htmlStr) return "";
+    let index = htmlStr.indexOf("&");
+    while (index !== -1) {
+      const endIndex = htmlStr.indexOf(";", index + 3);
+      let code;
+      if (endIndex === -1) break;
+      if (htmlStr[index + 1] === "#") {
+        // &#123; 形式的实体
+        code = parseInt(
+          (htmlStr[index + 2] === "x" ? "0" : "") +
+            htmlStr.substring(index + 2, endIndex)
+        );
+        if (!isNaN(code)) {
+          htmlStr =
+            htmlStr.substr(0, index) +
+            String.fromCharCode(code) +
+            htmlStr.substr(endIndex + 1);
+        }
+      } else {
+        // &nbsp; 形式的实体
+        code = htmlStr.substring(index + 1, endIndex);
+        if (decodeMap[code] || (code === "amp" && encodeAmp)) {
+          htmlStr =
+            htmlStr.substr(0, index) +
+            (decodeMap[code] || "&") +
+            htmlStr.substr(endIndex + 1);
+        }
+      }
+      index = htmlStr.indexOf("&", index + 1);
+    }
+    return htmlStr;
+  }
+
   // 是否为合规元素
-  isInvalidElement(name: string): boolean {
+  public isInvalidElement(name: string): boolean {
     const { ignoredElement = defaultIgnoreElements } = this.config;
     return ignoredElement.includes(name);
   }
 
   // 是否是自闭合标签
-  isSelfClosingElement(str: string, name: string): boolean {
+  public isSelfClosingElement(str: string, name: string): boolean {
     return (
       selfClosingElementRegexp.test(str) || selfClosingElements.includes(name)
     );
   }
 
   // 将元素名进行转换
-  formatElementName(name: string): string {
+  public formatElementName(name: string): string {
     const { transMap = defaultTransMap } = this.config;
     if (name in transMap) return transMap[name];
     return "view";
   }
 
   // 根据配置项处理属性
-  attributeProcessor(
+  public attributeProcessor(
     attrsMap: { [key: string]: any },
     elementName: string
   ): AttrsMapType {
@@ -80,7 +116,7 @@ class MiniParser {
   }
 
   // 将属性字符串转为对象
-  formatAttributes(str: string, elementName: string): AttrsMapType {
+  public formatAttributes(str: string, elementName: string): AttrsMapType {
     if (!str) return {};
     // 正则匹配属性
     let attrsMap: AttrsMapType = {};
@@ -99,12 +135,12 @@ class MiniParser {
   }
 
   // 更新解析字符串
-  updateHtmlStr(decodedHtml: string, str: string) {
+  public updateHtmlStr(decodedHtml: string, str: string) {
     return decodedHtml.substring(str.length);
   }
 
   // 解析html字符串并转为json结构
-  htmlToJson(decodedHtml: string) {
+  public htmlToJson(decodedHtml: string) {
     const jsonData = [];
 
     while (decodedHtml) {
@@ -184,7 +220,7 @@ class MiniParser {
   }
 
   // 结构数据生成器
-  skeletonGenerator(jsonData: JsonDataType, parentId = 0): any {
+  public skeletonGenerator(jsonData: JsonDataType, parentId = 0): any {
     if (jsonData.length <= 0) return [];
     let count = 0;
     const skeleton = [];
@@ -221,7 +257,7 @@ class MiniParser {
   }
 
   // json数据转结构数据
-  jsonToSkeleton(jsonData: JsonDataType) {
+  public jsonToSkeleton(jsonData: JsonDataType) {
     const keyMap: number[] = [];
 
     // 对起始和闭合标签进行标注，便于梳理结构
