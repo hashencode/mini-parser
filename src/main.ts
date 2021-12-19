@@ -174,6 +174,7 @@ class MiniParser {
       jsonData.push({
         type: "text",
         name: "text",
+        originName: "text",
         // 允许使用配置项的文字转换函数
         attrs: this.attributeProcessor({ content }, "text"),
       });
@@ -188,16 +189,14 @@ class MiniParser {
     let count = 0;
     const skeleton = [];
     while (count < jsonData.length) {
-      const current = jsonData[count];
+      const { genKey, type, ...current } = jsonData[count];
       const id = `${parentId}_${count}_${current.name}`;
       // 优化输出数据的type
-      const newType = ["start", "end"].includes(current.type)
-        ? "default"
-        : current.type;
+      const newType = ["start", "end"].includes(type) ? "default" : type;
       // 通过起始标签的genKey去寻找对应的闭合标签
-      if (current.type === "start") {
+      if (type === "start") {
         const endElementIndex = jsonData.findIndex(
-          ({ type, genKey }) => type === "end" && genKey === current.genKey
+          ({ type, genKey }) => type === "end" && genKey === genKey
         );
         // 如果找不到对应的闭合标签，则抛出错误并跳出循环
         if (endElementIndex === -1) break;

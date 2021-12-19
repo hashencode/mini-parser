@@ -82,6 +82,7 @@ exports.elementType = {
       id: "0_11_text",
       type: "text",
       name: "text",
+      originName: "text",
       attrs: {
         content: "汉字Aa01!@#$%",
       },
@@ -167,6 +168,7 @@ test word 123 $%#@
       id: "0_1_text",
       type: "text",
       name: "text",
+      originName: "text",
       attrs: {
         content: "test word 一二三 $%#@",
       },
@@ -182,11 +184,10 @@ test word 123 $%#@
   ],
 };
 
-exports.errorHtmlString = {
-  desc: "error html string",
+exports.specialHtml = {
+  desc: "special html string",
   html: `
 <div>
-<div></div>
 `,
   except: [],
 };

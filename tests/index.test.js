@@ -1,9 +1,4 @@
-const {
-  elementType,
-  elementAttrs,
-  config,
-  errorHtmlString,
-} = require("./mock");
+const { elementType, elementAttrs, config, specialHtml } = require("./mock");
 const { MiniParser } = require("../test_build");
 
 // 测试各种类型的元素的解析
@@ -24,8 +19,6 @@ test(config.desc, () => {
 });
 
 // 测试错误的字符串
-test(errorHtmlString.desc, () => {
-  expect(new MiniParser(errorHtmlString.html)).toStrictEqual(
-    errorHtmlString.except
-  );
+test(specialHtml.desc, () => {
+  expect(new MiniParser(specialHtml.html)).toStrictEqual(specialHtml.except);
 });

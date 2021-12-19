@@ -6,7 +6,7 @@ export interface AttrsMapType {
 export type JsonDataType = {
   type: string;
   name: string;
-  originName?: string;
+  originName: string;
   attrs?: AttrsMapType;
   display?: string;
   genKey?: number;
