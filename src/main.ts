@@ -59,7 +59,7 @@ class MiniParser {
       } else {
         // &nbsp; 形式的实体
         code = htmlStr.substring(index + 1, endIndex);
-        if (decodeMap[code] || (code === "amp" && encodeArrow)) {
+        if (decodeMap[code]) {
           htmlStr =
             htmlStr.substr(0, index) +
             (decodeMap[code] || "&") +
@@ -125,8 +125,20 @@ class MiniParser {
       function (_match, name: string, value: string) {
         const args = Array.prototype.slice.call(arguments);
         if (args.length >= 3) {
-          // 将属性值进行格式化
-          attrsMap[name] = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
+          const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
+          // 将属性值进行格式化，样式额外处理为对象
+          if (name === "style") {
+            const styleArray = value.split(";");
+            // ["a:x","b:y"]
+            const styleObj: { [key: string]: string } = {};
+            styleArray.forEach((styleItem) => {
+              if (!styleItem) return;
+              const [styleKey, styleValue] = styleItem.split(":");
+              styleObj[styleKey] = styleValue;
+            });
+            attrsMap.styleObj = styleObj;
+          }
+          attrsMap[name] = attrValue;
         }
         return "";
       }
@@ -236,7 +248,6 @@ class MiniParser {
             type === "end" && curGenKey === genKey
         );
         // 如果找不到对应的闭合标签，则抛出错误并跳出循环
-        console.log(endElementIndex);
         if (endElementIndex === -1) break;
         // 如果找到对应的标签，则将两者间的元素作为其子元素
         skeleton.push({
@@ -277,7 +288,6 @@ class MiniParser {
       }
     });
 
-    console.log(jsonData);
     return this.skeletonGenerator(jsonData);
   }
 }

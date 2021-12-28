@@ -49,7 +49,7 @@ exports.elementType = {
 
 exports.elementAttrs = {
   desc: "element attrs",
-  html: '<img class="test-class" id="test-id" src="https://xxx.com" alt="">',
+  html: '<img class="test-class" id="test-id" src="https://xxx.com" style="display:flex;align-items: center" alt="">',
   except: [
     {
       id: "0_0_image",
@@ -59,6 +59,11 @@ exports.elementAttrs = {
         class: "test-class",
         id: "test-id",
         src: "https://xxx.com",
+        styleObj: {
+          display: "flex",
+          "align-items": " center",
+        },
+        style: "display:flex;align-items: center",
         alt: "",
       },
       display: "inline",

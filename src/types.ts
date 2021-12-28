@@ -1,6 +1,6 @@
 // 元素属性类型
 export interface AttrsMapType {
-  [key: string]: string | boolean;
+  [key: string]: string | boolean | object;
 }
 
 // 转义字典类型
