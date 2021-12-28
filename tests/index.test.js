@@ -1,4 +1,10 @@
-const { elementType, elementAttrs, config, specialHtml } = require("./mock");
+const {
+  elementType,
+  elementAttrs,
+  config,
+  specialHtml,
+  domLevel,
+} = require("./mock");
 const { MiniParser } = require("../test_build");
 
 // 测试各种类型的元素的解析
@@ -16,6 +22,11 @@ test(config.desc, () => {
   expect(new MiniParser(config.html, config.config)).toStrictEqual(
     config.except
   );
+});
+
+// 测试DOM层级
+test(domLevel.desc, () => {
+  expect(new MiniParser(domLevel.html)).toStrictEqual(domLevel.except);
 });
 
 // 测试错误的字符串

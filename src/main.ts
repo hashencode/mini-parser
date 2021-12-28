@@ -37,7 +37,7 @@ class MiniParser {
   }
 
   // 替换被转义的字符串
-  public decodeHtml(htmlStr: string, encodeAmp: boolean) {
+  public decodeHtml(htmlStr: string, encodeArrow: boolean) {
     if (!htmlStr) return "";
     let index = htmlStr.indexOf("&");
     while (index !== -1) {
@@ -59,7 +59,7 @@ class MiniParser {
       } else {
         // &nbsp; 形式的实体
         code = htmlStr.substring(index + 1, endIndex);
-        if (decodeMap[code] || (code === "amp" && encodeAmp)) {
+        if (decodeMap[code] || (code === "amp" && encodeArrow)) {
           htmlStr =
             htmlStr.substr(0, index) +
             (decodeMap[code] || "&") +
@@ -232,9 +232,11 @@ class MiniParser {
       // 通过起始标签的genKey去寻找对应的闭合标签
       if (type === "start") {
         const endElementIndex = jsonData.findIndex(
-          ({ type, genKey }) => type === "end" && genKey === genKey
+          ({ type, genKey: curGenKey }) =>
+            type === "end" && curGenKey === genKey
         );
         // 如果找不到对应的闭合标签，则抛出错误并跳出循环
+        console.log(endElementIndex);
         if (endElementIndex === -1) break;
         // 如果找到对应的标签，则将两者间的元素作为其子元素
         skeleton.push({
@@ -275,6 +277,7 @@ class MiniParser {
       }
     });
 
+    console.log(jsonData);
     return this.skeletonGenerator(jsonData);
   }
 }

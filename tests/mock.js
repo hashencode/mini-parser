@@ -118,6 +118,52 @@ exports.config = {
   ],
 };
 
+exports.domLevel = {
+  desc: "dom level",
+  html: "<div><span>X<img src=''></span></div>",
+  except: [
+    {
+      id: "0_0_view",
+      name: "view",
+      originName: "div",
+      attrs: {},
+      display: "block",
+      type: "default",
+      children: [
+        {
+          id: "0_0_view",
+          name: "view",
+          originName: "span",
+          attrs: {},
+          display: "inline",
+          type: "default",
+          children: [
+            {
+              id: "0_0_text",
+              name: "text",
+              originName: "text",
+              attrs: {
+                content: "X",
+              },
+              type: "text",
+            },
+            {
+              id: "0_1_image",
+              name: "image",
+              originName: "img",
+              attrs: {
+                src: "",
+              },
+              display: "inline",
+              type: "selfClosing",
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
 exports.specialHtml = {
   desc: "special html string",
   html: "<div>",
