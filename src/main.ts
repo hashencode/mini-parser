@@ -22,8 +22,7 @@ class MiniParser {
   // 处理步骤
   public steps(htmlStr: string) {
     const cleanHtml = this.cleanHtml(htmlStr);
-    const decodedHtml = this.decodeHtml(cleanHtml, false);
-    const jsonData = this.htmlToJson(decodedHtml);
+    const jsonData = this.htmlToJson(cleanHtml);
     return this.jsonToSkeleton(jsonData);
   }
 
@@ -37,7 +36,7 @@ class MiniParser {
   }
 
   // 替换被转义的字符串
-  public decodeHtml(htmlStr: string, encodeArrow: boolean) {
+  public decodeHtml(htmlStr: string) {
     if (!htmlStr) return "";
     let index = htmlStr.indexOf("&");
     while (index !== -1) {
@@ -96,7 +95,17 @@ class MiniParser {
     attrsMap: { [key: string]: any },
     elementName: string
   ): AttrsMapType {
-    const { format = {} } = this.config;
+    const { format = {}, decodeAttributeValue = true } = this.config;
+
+    // 如果需要进行反转义
+    if (decodeAttributeValue) {
+      Object.keys(attrsMap).forEach((key) => {
+        if (typeof attrsMap[key] === "string") {
+          attrsMap[key] = this.decodeHtml(attrsMap[key]);
+        }
+      });
+    }
+
     // 如果存在对应的格式化配置
     if (format[elementName]) {
       // 对应元素配置项
@@ -129,12 +138,11 @@ class MiniParser {
           // 将属性值进行格式化，样式额外处理为对象
           if (name === "style") {
             const styleArray = value.split(";");
-            // ["a:x","b:y"]
             const styleObj: { [key: string]: string } = {};
             styleArray.forEach((styleItem) => {
               if (!styleItem) return;
               const [styleKey, styleValue] = styleItem.split(":");
-              styleObj[styleKey] = styleValue;
+              styleObj[styleKey] = styleValue.trim();
             });
             attrsMap.styleObj = styleObj;
           }

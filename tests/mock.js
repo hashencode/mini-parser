@@ -61,7 +61,7 @@ exports.elementAttrs = {
         src: "https://xxx.com",
         styleObj: {
           display: "flex",
-          "align-items": " center",
+          "align-items": "center",
         },
         style: "display:flex;align-items: center",
         alt: "",
@@ -171,6 +171,24 @@ exports.domLevel = {
 
 exports.specialHtml = {
   desc: "special html string",
-  html: "<div>",
-  except: [],
+  html: "&lt;<br><div>",
+  except: [
+    {
+      id: "0_0_text",
+      name: "text",
+      originName: "text",
+      attrs: {
+        content: "<",
+      },
+      type: "text",
+    },
+    {
+      id: "0_1_view",
+      name: "view",
+      originName: "br",
+      attrs: {},
+      display: "inline",
+      type: "selfClosing",
+    },
+  ],
 };

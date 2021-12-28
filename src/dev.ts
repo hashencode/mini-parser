@@ -1,6 +1,6 @@
 import { MiniParser } from "./main";
 
-const htmlStr = `<div>&lt;</div>`;
+const htmlStr = "&lt;<br><div>";
 
 const data = new MiniParser(htmlStr);
 console.log(data);
