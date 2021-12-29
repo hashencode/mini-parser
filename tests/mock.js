@@ -42,6 +42,7 @@ exports.elementType = {
       attrs: {
         content: "汉字Aa01!@#$%",
       },
+      display: "inline",
       type: "text",
     },
   ],
@@ -66,7 +67,7 @@ exports.elementAttrs = {
         style: "display:flex;align-items: center",
         alt: "",
       },
-      display: "inline",
+      display: "flex",
       type: "selfClosing",
     },
   ],
@@ -111,6 +112,7 @@ exports.config = {
       attrs: {
         content: "test word 一二三 $%#@",
       },
+      display: "inline",
     },
     {
       id: "0_2_rich-text",
@@ -150,6 +152,7 @@ exports.domLevel = {
               attrs: {
                 content: "X",
               },
+              display: "inline",
               type: "text",
             },
             {
@@ -180,6 +183,7 @@ exports.specialHtml = {
       attrs: {
         content: "<",
       },
+      display: "inline",
       type: "text",
     },
     {

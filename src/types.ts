@@ -3,13 +3,18 @@ export interface AttrsMapType {
   [key: string]: string | boolean | object;
 }
 
+// 行内样式对象类型
+export interface StyleObjType {
+  [key: string]: string;
+}
+
 // 转义字典类型
-export interface decodeMapType {
+export interface DecodeMapType {
   [key: string]: string;
 }
 
 // html专属元素正则类型
-export type htmlOnlyType = [RegExp, string][];
+export type HtmlOnlyType = [RegExp, string][];
 
 // 转换后的数据结构
 export type JsonDataType = {

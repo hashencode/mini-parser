@@ -1,36 +1,33 @@
 <block wx:if="{{parserData}}">
   <block wx:for="{{parserData}}" wx:key="id">
     <!-- 文字 -->
-    <text wx:if="{{item.name==='text'}}" class="mini-parser-text {{item.attrs.class}}">
-      {{item.attrs.content}}
-    </text>
+    <text wx:if="{{item.name==='text'}}" class="mini-parser-text mini-parser-{{item.display}} {{item.attrs.class}}">{{item.attrs.content}}</text>
 
-    <!-- 特殊字符 -->
-    <text wx:if="{{item.name==='text'}}" class="mini-parser-text {{item.attrs.class}}">\n</text>
+    <!-- 换行符 -->
+    <text wx:if="{{item.originName==='br'}}" class="mini-parser-br {{item.attrs.class}}">\n</text>
 
     <!-- 图片 -->
     <image wx:if="{{item.name==='image'}}"
-           class="mini-parser-origin-{{item.attrs.origin}} mini-parser-image {{item.attrs.class}}"
+           class="mini-parser-image mini-parser-{{item.display}} {{item.attrs.class}}"
            src="{{item.attrs.src}}"
            style="{{item.attrs.style}}"></image>
 
     <!-- 视频 -->
     <video wx:elif="{{item.name==='video'}}"
-           class="mini-parser-origin-{{item.attrs.origin}} mini-parser-video {{item.attrs.class}}"
+           class="mini-parser-video mini-parser-{{item.display}} {{item.attrs.class}}"
            src="{{item.attrs.src}}"
            style="{{item.attrs.style}}"></video>
 
     <!-- 链接 -->
     <view wx:elif="{{item.name==='link'}}"
-          class="mini-parser-origin-{{item.attrs.origin}} mini-parser-link {{item.attrs.class}}"
-          data-attrs="{{item.attrs}}"
+          class="mini-parser-link mini-parser-{{item.display}} {{item.attrs.class}}"
           bind:tap="handleLinkTap">
       <mini-parser wx:if="{{item.children}}" htmlStr="{{item.children}}"></mini-parser>
     </view>
 
     <!-- 默认 -->
     <view wx:else
-          class="mini-parser-origin-{{item.attrs.origin}} mini-parser-view {{item.attrs.class}}"
+          class="mini-parser-origin-{{item.originName}} mini-parser-view mini-parser-{{item.display}} {{item.attrs.class}}"
           style="{{item.attrs.style}}">
       <mini-parser wx:if="{{item.children}}" htmlStr="{{item.children}}"></mini-parser>
     </view>

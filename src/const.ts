@@ -1,4 +1,4 @@
-import { decodeMapType, htmlOnlyType } from "./types";
+import { DecodeMapType, HtmlOnlyType } from "./types";
 
 // 不合规元素
 const defaultIgnoreElementString =
@@ -38,7 +38,7 @@ export const attributeRegexp =
   /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
 
 // html专属元素正则
-export const htmlOnlyRegexp: htmlOnlyType = [
+export const htmlOnlyRegexp: HtmlOnlyType = [
   [/<\?xml.*\?>\n/, ""],
   [/<.*!doctype.*\>\n/, ""],
   [/<.*!DOCTYPE.*\>\n/, ""],
@@ -47,7 +47,7 @@ export const htmlOnlyRegexp: htmlOnlyType = [
 ];
 
 // 转义字典
-export const decodeMap: decodeMapType = {
+export const decodeMap: DecodeMapType = {
   lt: "<",
   gt: ">",
   quot: '"',

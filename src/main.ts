@@ -10,13 +10,13 @@ import {
   selfClosingElements,
   startElementRegexp,
 } from "./const";
-import { AttrsMapType, ConfigType, JsonDataType } from "./types";
+import { AttrsMapType, ConfigType, JsonDataType, StyleObjType } from "./types";
 
 class MiniParser {
   private readonly config;
   constructor(htmlStr: string, config?: ConfigType) {
     this.config = config || {};
-    return htmlStr ? this.steps(htmlStr) : "";
+    return htmlStr ? this.steps(htmlStr) : [];
   }
 
   // 处理步骤
@@ -141,7 +141,7 @@ class MiniParser {
             const styleObj: { [key: string]: string } = {};
             styleArray.forEach((styleItem) => {
               if (!styleItem) return;
-              const [styleKey, styleValue] = styleItem.split(":");
+              const [styleKey, styleValue = ""] = styleItem.split(":");
               styleObj[styleKey] = styleValue.trim();
             });
             attrsMap.styleObj = styleObj;
@@ -211,6 +211,11 @@ class MiniParser {
         const attrs = this.formatAttributes(attrString, name);
         // 配置display属性
         let display = blockElements.includes(name) ? "block" : "inline";
+        const styleObj = attrs.styleObj as StyleObjType;
+        if (styleObj) {
+          const { display: styleDisplay } = styleObj;
+          if (styleDisplay) display = styleDisplay;
+        }
         // 将当前数据追加到数组
         jsonData.push({
           type: selfClosing ? "selfClosing" : "start",
@@ -231,6 +236,7 @@ class MiniParser {
         type: "text",
         name: "text",
         originName: "text",
+        display: "inline",
         // 允许使用配置项的文字转换函数
         attrs: this.attributeProcessor({ content }, "text"),
       });
