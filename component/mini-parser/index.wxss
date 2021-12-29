@@ -1,14 +1,1 @@
-/* 默认样式 */
-.mini-parser-inline{
-    display: inline;
-}
-.mini-parser-inline-block{
-    display: inline-block;
-}
-.mini-parser-flex{
-    display: flex;
-}
-.mini-parser-origin-strong{
-    font-weight: bold;
-}
-/* 自定义样式 */
+
