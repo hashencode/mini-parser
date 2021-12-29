@@ -142,7 +142,7 @@ class MiniParser {
             styleArray.forEach((styleItem) => {
               if (!styleItem) return;
               const [styleKey, styleValue = ""] = styleItem.split(":");
-              styleObj[styleKey] = styleValue.trim();
+              if (styleKey) styleObj[styleKey.trim()] = styleValue.trim();
             });
             attrsMap.styleObj = styleObj;
           }
