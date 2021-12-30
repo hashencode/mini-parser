@@ -10,12 +10,20 @@ import {
   selfClosingElements,
   startElementRegexp,
 } from "./const";
-import { AttrsMapType, ConfigType, JsonDataType, StyleObjType } from "./types";
+import {
+  AttrsMapType,
+  ConstructorType,
+  JsonDataType,
+  StyleObjType,
+} from "./types";
 
 class MiniParser {
   private readonly config;
-  constructor(htmlStr: string, config?: ConfigType) {
+  private readonly extraData;
+
+  constructor({ htmlStr, config, extraData }: ConstructorType) {
     this.config = config || {};
+    this.extraData = extraData;
     return htmlStr ? this.steps(htmlStr) : [];
   }
 
@@ -124,9 +132,37 @@ class MiniParser {
     return attrsMap;
   }
 
+  // 处理样式属性
+  public styleProcessor(valueStr: string) {
+    const { adaptive = true } = this.config;
+    const { containerWidth } = this.extraData;
+    const styleArray = valueStr.split(";");
+    const styleObj: { [key: string]: string } = {};
+    let styleValue = "";
+
+    styleArray.forEach((styleItem) => {
+      if (!styleItem) return;
+      const [styleKey, styleValue = ""] = styleItem.split(":");
+      if (styleKey) {
+        const keyStr = styleKey.trim();
+        let valueStr = styleValue.trim();
+        // 如果需要进行自适应处理
+        if (adaptive && keyStr === "width" && valueStr) {
+          const scalingRatio = containerWidth / +styleValue;
+          valueStr.replace();
+        }
+        styleObj[keyStr] = valueStr;
+      }
+    });
+
+    return { styleValue, styleObj };
+  }
+
   // 将属性字符串转为对象
   public formatAttributes(str: string, elementName: string): AttrsMapType {
     if (!str) return {};
+    const that = this;
+
     // 正则匹配属性
     let attrsMap: AttrsMapType = {};
     str.replace(
@@ -137,16 +173,12 @@ class MiniParser {
           const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
           // 将属性值进行格式化，样式额外处理为对象
           if (name === "style") {
-            const styleArray = value.split(";");
-            const styleObj: { [key: string]: string } = {};
-            styleArray.forEach((styleItem) => {
-              if (!styleItem) return;
-              const [styleKey, styleValue = ""] = styleItem.split(":");
-              if (styleKey) styleObj[styleKey.trim()] = styleValue.trim();
-            });
+            const { styleObj, styleValue } = that.styleProcessor(attrValue);
             attrsMap.styleObj = styleObj;
+            attrsMap[name] = styleValue;
+          } else {
+            attrsMap[name] = attrValue;
           }
-          attrsMap[name] = attrValue;
         }
         return "";
       }

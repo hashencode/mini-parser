@@ -1,4 +1,8 @@
 <view class="mini-parser" wx:if="{{htmlStr}}">
-  <render htmlStr="{{htmlStr}}" config="{{config}}"></render>
+  <render wx:if="{{containerWidth>0}}"
+          htmlStr="{{htmlStr}}"
+          config="{{config}}"
+          containerWidth="{{containerWidth}}">
+  </render>
 </view>
 

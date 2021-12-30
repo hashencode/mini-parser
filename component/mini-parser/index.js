@@ -6,17 +6,19 @@ Component({
     htmlStr: { type: String, optionalTypes: [Array] },
     config: { type: Object },
   },
+  data: {
+    containerWidth: 0,
+  },
   ready() {
-    // 如果需要进行宽度自适应
-    const { config } = this.data;
-    if (config && config.widthAdaptive) {
-      const query = wx.createSelectorQuery().in(this);
-      query
-        .select(".mini-parser")
-        .boundingClientRect((res) => {
-          console.log("@@@", res);
-        })
-        .exec();
-    }
+    // 获取外层容器宽度
+    wx.createSelectorQuery()
+      .in(this)
+      .select(".mini-parser")
+      .boundingClientRect((res) => {
+        this.setData({
+          containerWidth: res.width,
+        });
+      })
+      .exec();
   },
 });

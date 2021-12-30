@@ -1,3 +1,15 @@
+// 从容器传入的数据类型
+export interface extraDataType {
+  containerWidth: number;
+}
+
+// 构造函数参数类型
+export interface ConstructorType {
+  config?: ConfigType;
+  extraData: extraDataType;
+  htmlStr: string;
+}
+
 // 元素属性类型
 export interface AttrsMapType {
   [key: string]: string | boolean | object;
@@ -18,20 +30,20 @@ export type HtmlOnlyType = [RegExp, string][];
 
 // 转换后的数据结构
 export type JsonDataType = {
-  type: string;
-  name: string;
-  originName: string;
   attrs?: AttrsMapType;
+  children?: JsonDataType[];
   display?: string;
   genKey?: number;
-  children?: JsonDataType[];
+  name: string;
+  originName: string;
+  type: string;
 }[];
 
 // 配置项
 export type ConfigType = {
-  ignoredElement?: string[]; // 忽略解析的元素类型，[]
-  format?: { [key: string]: { [key: string]: any } }; // 属性格式化
+  adaptive?: string; // 自适应
   decodeAttributeValue?: boolean; // 对属性值进行反转义
-  widthAdaptive?: string; // 宽度自适应
+  format?: { [key: string]: { [key: string]: any } }; // 属性格式化
+  ignoredElement?: string[]; // 忽略解析的元素类型，[]
   transMap?: { [key: string]: string }; // 元素转换对应表
 };

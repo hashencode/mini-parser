@@ -7,6 +7,7 @@ Component({
   properties: {
     htmlStr: { type: String, optionalTypes: [Array] },
     config: { type: Object },
+    containerWidth: { type: Number },
   },
   data: {
     parserData: null,
@@ -14,9 +15,13 @@ Component({
   observers: {
     htmlStr(htmlStr) {
       if (!htmlStr) return;
+      // 传入容器的宽度
+      const { containerWidth, config } = this.data;
+      const extraData = { containerWidth };
+      // 根据数据类型返回不同的结果
       const data = Array.isArray(htmlStr)
         ? htmlStr
-        : new MiniParser(htmlStr, this.data.config);
+        : new MiniParser({ htmlStr, config, extraData });
       this.setData({
         parserData: data,
       });
