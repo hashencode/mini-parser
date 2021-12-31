@@ -19,13 +19,13 @@
           class="mini-parser-link {{item.attrs.class}}"
           data-attrs="{{item.attrs}}"
           bind:tap="handleLinkTap">
-      <render wx:if="{{item.children}}" html="{{item.children}}"></render>
+      <render wx:if="{{item.children}}" html="{{item.children}}" containerWidth="{{containerWidth}}"></render>
     </view>
     <!-- 默认 -->
     <view wx:else
           class="mini-parser-origin-{{item.originName}} mini-parser-view mini-parser-{{item.display}} {{item.attrs.class}}"
           style="{{item.attrs.style}}">
-      <render wx:if="{{item.children}}" html="{{item.children}}"></render>
+      <render wx:if="{{item.children}}" html="{{item.children}}" containerWidth="{{containerWidth}}"></render>
     </view>
   </block>
 </block>

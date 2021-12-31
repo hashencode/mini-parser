@@ -37,9 +37,3 @@ test(specialHtml.desc, () => {
   const { html, except } = specialHtml;
   expect(new MiniParser({ html })).toStrictEqual(except);
 });
-
-// 测试自适应
-test(adapter.desc, () => {
-  const { html, except, extraData } = adapter;
-  expect(new MiniParser({ html, extraData })).toStrictEqual(except);
-});

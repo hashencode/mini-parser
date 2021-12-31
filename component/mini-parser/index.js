@@ -15,9 +15,11 @@ Component({
       .in(this)
       .select(".mini-parser")
       .boundingClientRect((res) => {
-        this.setData({
-          containerWidth: res.width,
-        });
+        if (res.width > 0) {
+          this.setData({
+            containerWidth: res.width,
+          });
+        }
       })
       .exec();
   },

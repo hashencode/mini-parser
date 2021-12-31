@@ -138,19 +138,45 @@ class MiniParser {
   public styleProcessor(valueStr: string) {
     const styleArray = valueStr.split(";");
     const styleObj: { [key: string]: string } = {};
+    const { adaptive = true } = this.config;
+    const { containerWidth } = this.extraData;
+    let scalingRatio = 0;
 
     styleArray.forEach((styleItem) => {
       if (!styleItem) return;
-
       const [styleKey, styleValue = ""] = styleItem.split(":");
       if (styleKey) {
         const keyStr = styleKey.trim();
-        let valueStr = styleValue.trim();
-        styleObj[keyStr] = valueStr;
+        const valueStr = styleValue.trim();
+        // 进行自适应需要获取到外层宽度
+        if (adaptive && containerWidth) {
+          // 获取到数值和单位
+          valueStr.replace(
+            styleWidthValueRegexp,
+            function (_match, digital, unit) {
+              if (digital && !isNaN(digital) && unit === "px") {
+                // 如果当前宽度小于容器宽度，则进行自适应处理
+                if (keyStr === "width" && +digital > containerWidth) {
+                  scalingRatio = containerWidth / +digital;
+                  styleObj.width = `${containerWidth}${unit}`;
+                } else if (keyStr === "height" && scalingRatio > 0) {
+                  // 如果存在宽度的缩放比例，则对高度进行缩放
+                  styleObj.height = `${digital * scalingRatio}${unit}`;
+                }
+              }
+              return "";
+            }
+          );
+        } else {
+          styleObj[keyStr] = valueStr;
+        }
       }
     });
 
-    return styleObj;
+    const styleStr = Object.keys(styleObj)
+      .map((key) => `${key}:${styleObj[key]}`)
+      .join(";");
+    return { styleStr, styleObj };
   }
 
   // 将属性字符串转为对象
@@ -167,10 +193,13 @@ class MiniParser {
         if (args.length >= 3) {
           const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
           // 将属性值进行格式化，样式额外处理为对象
+          const { styleObj, styleStr } = that.styleProcessor(attrValue);
           if (name === "style") {
-            attrsMap.styleObj = that.styleProcessor(attrValue);
+            attrsMap.styleObj = styleObj;
+            attrsMap[name] = styleStr;
+          } else {
+            attrsMap[name] = attrValue;
           }
-          attrsMap[name] = attrValue;
         }
         return "";
       }
@@ -179,7 +208,7 @@ class MiniParser {
   }
 
   // 更新解析字符串
-  public updatehtml(decodedHtml: string, str: string) {
+  public updateHtmlStr(decodedHtml: string, str: string) {
     return decodedHtml.substring(str.length);
   }
 
@@ -194,7 +223,7 @@ class MiniParser {
         if (!match) continue;
         const [str, name] = match;
         // 去除当前匹配字符串的新字符串
-        const newStr = this.updatehtml(decodedHtml, str);
+        const newStr = this.updateHtmlStr(decodedHtml, str);
         // 判断元素是否需要解析
         if (this.isInvalidElement(name)) {
           // 去掉当前解析的字符
@@ -220,7 +249,7 @@ class MiniParser {
         // 如果是起始标签，需要额外考虑属性
         const [str, name, attrString = ""] = match;
         // 去除当前匹配字符串的新字符串
-        const newStr = this.updatehtml(decodedHtml, str);
+        const newStr = this.updateHtmlStr(decodedHtml, str);
         // 判断元素是否需要解析
         if (this.isInvalidElement(name)) {
           // 去掉当前解析的字符
@@ -235,9 +264,9 @@ class MiniParser {
         const attrs = this.formatAttributes(attrString, name);
         // 配置display属性
         let display = blockElements.includes(name) ? "block" : "inline";
-        const styleObj = attrs.styleObj;
+        const styleObj = attrs.styleObj as StyleObjType;
         if (styleObj) {
-          const { display: styleDisplay } = styleObj as StyleObjType;
+          const { display: styleDisplay } = styleObj;
           if (styleDisplay) display = styleDisplay;
         }
         // 将当前数据追加到数组
@@ -326,74 +355,7 @@ class MiniParser {
       }
     });
 
-    const skeleton = this.skeletonGenerator(jsonData);
-    return this.adaptiveProcessor(skeleton);
-  }
-
-  // 处理自适应
-  public adaptiveProcessor(
-    skeleton: JsonDataType,
-    parentScalingRatio?: number
-  ): any {
-    const { adaptive = true } = this.config;
-    const { containerWidth } = this.extraData;
-    if (!adaptive || !containerWidth) return skeleton;
-
-    skeleton.forEach((skeletonItem) => {
-      const { attrs, children } = skeletonItem;
-      // 记录宽度缩放比例
-      let scalingRatio = parentScalingRatio || 0;
-
-      if (attrs && attrs.styleObj) {
-        const styleObj = attrs.styleObj as StyleObjType;
-        if (styleObj) {
-          Object.keys(styleObj).forEach((keyStr) => {
-            const valueString: string = styleObj[keyStr];
-            // 获取到数值和单位
-            valueString.replace(
-              styleWidthValueRegexp,
-              function (_match, digital, unit) {
-                if (digital && !isNaN(digital) && unit === "px") {
-                  if (keyStr === "width") {
-                    // 判断是否需要进行缩放
-                    const isNeedScale =
-                      scalingRatio || +digital > containerWidth;
-                    // 超出最大宽度时重写宽度并计算缩放比例
-                    if (isNeedScale) {
-                      scalingRatio =
-                        scalingRatio || +(containerWidth / +digital).toFixed(3);
-                    }
-                    // 确定缩放宽度
-                    const scaleWidth =
-                      +digital > containerWidth
-                        ? containerWidth
-                        : (scalingRatio * digital).toFixed(1);
-                    styleObj.width = `${scaleWidth}${unit}`;
-                  } else if (keyStr === "height") {
-                    // 如果存在宽度的缩放比例，则对高度进行缩放
-                    if (scalingRatio > 0) {
-                      styleObj.height = `${digital * scalingRatio}${unit}`;
-                    }
-                  }
-                }
-                return "";
-              }
-            );
-          });
-          attrs.styleObj = styleObj;
-          attrs.style = Object.keys(styleObj)
-            .map((key) => `${key}:${styleObj[key]}`)
-            .join(";");
-        }
-      }
-
-      if (children) {
-        skeletonItem.children = this.adaptiveProcessor(children, scalingRatio);
-      }
-      return skeletonItem;
-    });
-
-    return skeleton;
+    return this.skeletonGenerator(jsonData);
   }
 }
 
