@@ -1,5 +1,8 @@
 import { DecodeMapType, HtmlOnlyType } from "./types";
 
+// 默认额外数据
+export const defaultExtraData = { containerWidth: 0 };
+
 // 不合规元素
 const defaultIgnoreElementString =
   "area,base,canvas,embed,frame,head,iframe,input,link,map,meta,param,rp,script,source,style,textarea,title,track,wbr";
@@ -45,6 +48,9 @@ export const htmlOnlyRegexp: HtmlOnlyType = [
   [/<!--.*?-->/gi, ""],
   [/\/\*.*?\*\//gi, ""],
 ];
+
+// 获取行内元素值正则
+export const styleWidthValueRegexp = /(\d*)(.*)/;
 
 // 转义字典
 export const decodeMap: DecodeMapType = {

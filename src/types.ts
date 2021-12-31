@@ -6,13 +6,13 @@ export interface extraDataType {
 // 构造函数参数类型
 export interface ConstructorType {
   config?: ConfigType;
-  extraData: extraDataType;
-  htmlStr: string;
+  extraData?: extraDataType;
+  html: string;
 }
 
 // 元素属性类型
 export interface AttrsMapType {
-  [key: string]: string | boolean | object;
+  [key: string]: string | boolean | object | StyleObjType;
 }
 
 // 行内样式对象类型
@@ -31,7 +31,7 @@ export type HtmlOnlyType = [RegExp, string][];
 // 转换后的数据结构
 export type JsonDataType = {
   attrs?: AttrsMapType;
-  children?: JsonDataType[];
+  children?: JsonDataType;
   display?: string;
   genKey?: number;
   name: string;

@@ -1,4 +1,5 @@
 import {
+  defaultExtraData,
   attributeRegexp,
   blockElements,
   decodeMap,
@@ -9,6 +10,7 @@ import {
   selfClosingElementRegexp,
   selfClosingElements,
   startElementRegexp,
+  styleWidthValueRegexp,
 } from "./const";
 import {
   AttrsMapType,
@@ -21,61 +23,61 @@ class MiniParser {
   private readonly config;
   private readonly extraData;
 
-  constructor({ htmlStr, config, extraData }: ConstructorType) {
+  constructor({ html, config, extraData }: ConstructorType) {
     this.config = config || {};
-    this.extraData = extraData;
-    return htmlStr ? this.steps(htmlStr) : [];
+    this.extraData = extraData || defaultExtraData;
+    return html ? this.steps(html) : [];
   }
 
   // 处理步骤
-  public steps(htmlStr: string) {
-    const cleanHtml = this.cleanHtml(htmlStr);
+  public steps(html: string) {
+    const cleanHtml = this.cleanHtml(html);
     const jsonData = this.htmlToJson(cleanHtml);
     return this.jsonToSkeleton(jsonData);
   }
 
-  public cleanHtml(htmlStr: string) {
-    if (!htmlStr) return "";
+  public cleanHtml(html: string) {
+    if (!html) return "";
     htmlOnlyRegexp.forEach((item) => {
       const [_regexp, replacement] = item;
-      htmlStr = htmlStr.replace(_regexp, replacement);
+      html = html.replace(_regexp, replacement);
     });
-    return htmlStr;
+    return html;
   }
 
   // 替换被转义的字符串
-  public decodeHtml(htmlStr: string) {
-    if (!htmlStr) return "";
-    let index = htmlStr.indexOf("&");
+  public decodeHtml(html: string) {
+    if (!html) return "";
+    let index = html.indexOf("&");
     while (index !== -1) {
-      const endIndex = htmlStr.indexOf(";", index + 3);
+      const endIndex = html.indexOf(";", index + 3);
       let code;
       if (endIndex === -1) break;
-      if (htmlStr[index + 1] === "#") {
+      if (html[index + 1] === "#") {
         // &#123; 形式的实体
         code = parseInt(
-          (htmlStr[index + 2] === "x" ? "0" : "") +
-            htmlStr.substring(index + 2, endIndex)
+          (html[index + 2] === "x" ? "0" : "") +
+            html.substring(index + 2, endIndex)
         );
         if (!isNaN(code)) {
-          htmlStr =
-            htmlStr.substr(0, index) +
+          html =
+            html.substr(0, index) +
             String.fromCharCode(code) +
-            htmlStr.substr(endIndex + 1);
+            html.substr(endIndex + 1);
         }
       } else {
         // &nbsp; 形式的实体
-        code = htmlStr.substring(index + 1, endIndex);
+        code = html.substring(index + 1, endIndex);
         if (decodeMap[code]) {
-          htmlStr =
-            htmlStr.substr(0, index) +
+          html =
+            html.substr(0, index) +
             (decodeMap[code] || "&") +
-            htmlStr.substr(endIndex + 1);
+            html.substr(endIndex + 1);
         }
       }
-      index = htmlStr.indexOf("&", index + 1);
+      index = html.indexOf("&", index + 1);
     }
-    return htmlStr;
+    return html;
   }
 
   // 是否为合规元素
@@ -134,28 +136,21 @@ class MiniParser {
 
   // 处理样式属性
   public styleProcessor(valueStr: string) {
-    const { adaptive = true } = this.config;
-    const { containerWidth } = this.extraData;
     const styleArray = valueStr.split(";");
     const styleObj: { [key: string]: string } = {};
-    let styleValue = "";
 
     styleArray.forEach((styleItem) => {
       if (!styleItem) return;
+
       const [styleKey, styleValue = ""] = styleItem.split(":");
       if (styleKey) {
         const keyStr = styleKey.trim();
         let valueStr = styleValue.trim();
-        // 如果需要进行自适应处理
-        if (adaptive && keyStr === "width" && valueStr) {
-          const scalingRatio = containerWidth / +styleValue;
-          valueStr.replace();
-        }
         styleObj[keyStr] = valueStr;
       }
     });
 
-    return { styleValue, styleObj };
+    return styleObj;
   }
 
   // 将属性字符串转为对象
@@ -173,12 +168,9 @@ class MiniParser {
           const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
           // 将属性值进行格式化，样式额外处理为对象
           if (name === "style") {
-            const { styleObj, styleValue } = that.styleProcessor(attrValue);
-            attrsMap.styleObj = styleObj;
-            attrsMap[name] = styleValue;
-          } else {
-            attrsMap[name] = attrValue;
+            attrsMap.styleObj = that.styleProcessor(attrValue);
           }
+          attrsMap[name] = attrValue;
         }
         return "";
       }
@@ -187,7 +179,7 @@ class MiniParser {
   }
 
   // 更新解析字符串
-  public updateHtmlStr(decodedHtml: string, str: string) {
+  public updatehtml(decodedHtml: string, str: string) {
     return decodedHtml.substring(str.length);
   }
 
@@ -202,7 +194,7 @@ class MiniParser {
         if (!match) continue;
         const [str, name] = match;
         // 去除当前匹配字符串的新字符串
-        const newStr = this.updateHtmlStr(decodedHtml, str);
+        const newStr = this.updatehtml(decodedHtml, str);
         // 判断元素是否需要解析
         if (this.isInvalidElement(name)) {
           // 去掉当前解析的字符
@@ -228,7 +220,7 @@ class MiniParser {
         // 如果是起始标签，需要额外考虑属性
         const [str, name, attrString = ""] = match;
         // 去除当前匹配字符串的新字符串
-        const newStr = this.updateHtmlStr(decodedHtml, str);
+        const newStr = this.updatehtml(decodedHtml, str);
         // 判断元素是否需要解析
         if (this.isInvalidElement(name)) {
           // 去掉当前解析的字符
@@ -243,9 +235,9 @@ class MiniParser {
         const attrs = this.formatAttributes(attrString, name);
         // 配置display属性
         let display = blockElements.includes(name) ? "block" : "inline";
-        const styleObj = attrs.styleObj as StyleObjType;
+        const styleObj = attrs.styleObj;
         if (styleObj) {
-          const { display: styleDisplay } = styleObj;
+          const { display: styleDisplay } = styleObj as StyleObjType;
           if (styleDisplay) display = styleDisplay;
         }
         // 将当前数据追加到数组
@@ -334,7 +326,74 @@ class MiniParser {
       }
     });
 
-    return this.skeletonGenerator(jsonData);
+    const skeleton = this.skeletonGenerator(jsonData);
+    return this.adaptiveProcessor(skeleton);
+  }
+
+  // 处理自适应
+  public adaptiveProcessor(
+    skeleton: JsonDataType,
+    parentScalingRatio?: number
+  ): any {
+    const { adaptive = true } = this.config;
+    const { containerWidth } = this.extraData;
+    if (!adaptive || !containerWidth) return skeleton;
+
+    skeleton.forEach((skeletonItem) => {
+      const { attrs, children } = skeletonItem;
+      // 记录宽度缩放比例
+      let scalingRatio = parentScalingRatio || 0;
+
+      if (attrs && attrs.styleObj) {
+        const styleObj = attrs.styleObj as StyleObjType;
+        if (styleObj) {
+          Object.keys(styleObj).forEach((keyStr) => {
+            const valueString: string = styleObj[keyStr];
+            // 获取到数值和单位
+            valueString.replace(
+              styleWidthValueRegexp,
+              function (_match, digital, unit) {
+                if (digital && !isNaN(digital) && unit === "px") {
+                  if (keyStr === "width") {
+                    // 判断是否需要进行缩放
+                    const isNeedScale =
+                      scalingRatio || +digital > containerWidth;
+                    // 超出最大宽度时重写宽度并计算缩放比例
+                    if (isNeedScale) {
+                      scalingRatio =
+                        scalingRatio || +(containerWidth / +digital).toFixed(3);
+                    }
+                    // 确定缩放宽度
+                    const scaleWidth =
+                      +digital > containerWidth
+                        ? containerWidth
+                        : (scalingRatio * digital).toFixed(1);
+                    styleObj.width = `${scaleWidth}${unit}`;
+                  } else if (keyStr === "height") {
+                    // 如果存在宽度的缩放比例，则对高度进行缩放
+                    if (scalingRatio > 0) {
+                      styleObj.height = `${digital * scalingRatio}${unit}`;
+                    }
+                  }
+                }
+                return "";
+              }
+            );
+          });
+          attrs.styleObj = styleObj;
+          attrs.style = Object.keys(styleObj)
+            .map((key) => `${key}:${styleObj[key]}`)
+            .join(";");
+        }
+      }
+
+      if (children) {
+        skeletonItem.children = this.adaptiveProcessor(children, scalingRatio);
+      }
+      return skeletonItem;
+    });
+
+    return skeleton;
   }
 }
 

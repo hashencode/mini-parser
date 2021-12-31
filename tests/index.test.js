@@ -4,32 +4,42 @@ const {
   config,
   specialHtml,
   domLevel,
+  adapter,
 } = require("./mock");
 const { MiniParser } = require("../test_build");
 
 // 测试各种类型的元素的解析
 test(elementType.desc, () => {
-  expect(new MiniParser(elementType.html)).toStrictEqual(elementType.except);
+  const { html, except } = elementType;
+  expect(new MiniParser({ html })).toStrictEqual(except);
 });
 
 // 测试元素属性解析
 test(elementAttrs.desc, () => {
-  expect(new MiniParser(elementAttrs.html)).toStrictEqual(elementAttrs.except);
+  const { html, except } = elementAttrs;
+  expect(new MiniParser({ html })).toStrictEqual(except);
 });
 
 // 测试配置项
 test(config.desc, () => {
-  expect(new MiniParser(config.html, config.config)).toStrictEqual(
-    config.except
-  );
+  const { html, except } = config;
+  expect(new MiniParser({ html, config: config.config })).toStrictEqual(except);
 });
 
 // 测试DOM层级
 test(domLevel.desc, () => {
-  expect(new MiniParser(domLevel.html)).toStrictEqual(domLevel.except);
+  const { html, except } = domLevel;
+  expect(new MiniParser({ html })).toStrictEqual(except);
 });
 
 // 测试错误的字符串
 test(specialHtml.desc, () => {
-  expect(new MiniParser(specialHtml.html)).toStrictEqual(specialHtml.except);
+  const { html, except } = specialHtml;
+  expect(new MiniParser({ html })).toStrictEqual(except);
+});
+
+// 测试自适应
+test(adapter.desc, () => {
+  const { html, except, extraData } = adapter;
+  expect(new MiniParser({ html, extraData })).toStrictEqual(except);
 });

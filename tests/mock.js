@@ -196,3 +196,42 @@ exports.specialHtml = {
     },
   ],
 };
+
+exports.adapter = {
+  desc: "adapter container width",
+  html: `<div style="width:600px;height:400px"><span style="align-items: center; width:300px;"></span></div>`,
+  extraData: { containerWidth: 400 },
+  except: [
+    {
+      id: "0_0_view",
+      name: "view",
+      originName: "div",
+      attrs: {
+        styleObj: {
+          width: "400px",
+          height: "266.8px",
+        },
+        style: "width:400px;height:266.8px",
+      },
+      display: "block",
+      type: "default",
+      children: [
+        {
+          id: "0_0_view",
+          name: "view",
+          originName: "span",
+          attrs: {
+            styleObj: {
+              "align-items": "center",
+              width: "200.1px",
+            },
+            style: "align-items:center;width:200.1px",
+          },
+          display: "inline",
+          type: "default",
+          children: [],
+        },
+      ],
+    },
+  ],
+};

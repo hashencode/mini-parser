@@ -5,7 +5,7 @@ Component({
     addGlobalClass: true, // page样式影响组件内样式
   },
   properties: {
-    htmlStr: { type: String, optionalTypes: [Array] },
+    html: { type: String, optionalTypes: [Array] },
     config: { type: Object },
     containerWidth: { type: Number },
   },
@@ -13,15 +13,15 @@ Component({
     parserData: null,
   },
   observers: {
-    htmlStr(htmlStr) {
-      if (!htmlStr) return;
+    html(html) {
+      if (!html) return;
       // 传入容器的宽度
       const { containerWidth, config } = this.data;
       const extraData = { containerWidth };
       // 根据数据类型返回不同的结果
-      const data = Array.isArray(htmlStr)
-        ? htmlStr
-        : new MiniParser({ htmlStr, config, extraData });
+      const data = Array.isArray(html)
+        ? html
+        : new MiniParser({ html, config, extraData });
       this.setData({
         parserData: data,
       });
