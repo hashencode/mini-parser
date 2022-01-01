@@ -41,9 +41,9 @@ export type JsonDataType = {
 
 // 配置项
 export type ConfigType = {
-  adaptive?: string; // 自适应
+  adaptive?: boolean; // 自适应
   decodeAttributeValue?: boolean; // 对属性值进行反转义
   format?: { [key: string]: { [key: string]: any } }; // 属性格式化
-  ignoredElement?: string[]; // 忽略解析的元素类型，[]
+  ignoredElement?: string[]; // 忽略解析的元素类型
   transMap?: { [key: string]: string }; // 元素转换对应表
 };

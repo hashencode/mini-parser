@@ -4,11 +4,11 @@
 
 ## 🎉 特性
 
-- 🎈 轻量高效，压缩后体积仅4K
+- 🎈  轻量高效，体积仅5KB
 
-- 📦 组件式封装，无需额外的模板与API调用
+- 📦 组件式封装，开箱即用
 
-- ⚙️ 丰富配置项，控制移动端页面适配
+- 🔨 数据纯净，功能精简，更适合业务开发
 
 ## 📦 安装
 
@@ -16,29 +16,134 @@
 npm install mini-program-parser
 ```
 
-```bash
-yarn add mini-program-parser
-```
-
-
 ## 🔨 使用
 
-```jsx
-import { Button, DatePicker } from 'antd';
+1. 使用上述方法安装 mini-parser 并使用微信开发者工具进行 npm 构建
 
-const App = () => (
-  <>
-    <Button type="primary">PRESS ME</Button>
-    <DatePicker placeholder="select date" />
-  </>
-);
+2. 将库中`component/mini-parser`路径下的 mini-parser 组件拷贝至你的项目中
+
+3. 在页面的 json 文件中引入 mini-parser：
+   
+   ```json
+   {
+     "component": true,
+     "usingComponents": {
+       "mini-parser": "{{your_path}}/mini-parser/index"
+     }
+   }
+   ```
+
+4. 在 wxml 中使用 mini-parser：
+   
+   ```html
+   <mini-parser html="{{htmlStr}}" config="{{config}}"></mini-parser>
+   ```
+
+## ⚙️ 配置项
+
+| 属性                   | 说明        | 类型                        | 默认值                   |
+| -------------------- | --------- | ------------------------- | --------------------- |
+| adaptive             | 宽度自适应模式   | boolean                   | true                  |
+| decodeAttributeValue | 对属性值进行反转义 | boolean                   | true                  |
+| format               | 属性格式化     | -                         | -                     |
+| ignoredElement       | 无需解析的元素类型 | string[]                  | defaultIgnoreElements |
+| transMap             | 元素转换映射表   | { [key: string]: string } | defaultTransMap       |
+
+### adaptive
+
+宽度自适应模式
+
+默认开启，当元素的宽度超过外层容器的宽度时，脚本会自动修改其宽度为容器宽度，并等比缩放其高度（如果有设置的话）
+
+### decodeAttributeValue
+
+对属性值进行反转义
+
+默认开启，从数据库读取的数据通常会对特殊字符进行转义，但实际使用时需要将其进行反转义，因为 html 文本被保存在`content`属性中，所以文本也会被反转义
+
+### format
+
+属性格式化
+
+干涉解析结果的方法，可以对具体元素的属性解析行为进行干涉，新增/修改具体的属性/方法，举个例子：
+
+```javascript
+format: {
+    img: {
+        /* 替换图片链接协议 */
+        src: (data) => data.replace("http", "https"),
+        /* 重写图片ID */
+        id: "overwrite-id",
+        /* 点击事件回调函数名 */
+        tapEvent: "handleTap"
+    },
+    text: {
+        /* 修改文本 */
+        content: (data) => data.replace("123", "abc"),
+    },
+}
 ```
 
-And import style manually:
+### ignoredElement
 
-```jsx
-import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+无需解析的元素类型
+
+存在于该数组内的元素，在解析时不会解析其本身及其子元素，可在`MiniParser.defaultIgnoreElements`上追加元素或者替换为自己的忽略配置
+
+```javascript
+ignoredElement:[...MiniParser.defaultIgnoreElements, 'iframe']
+// or
+ignoredElement:['iframe', 'table', '...']
 ```
+
+### transMap
+
+元素转换映射表
+
+影响转换后的元素对象数据中的`name`值，用于判断使用何种小程序元素去替换该元素，不存在表内的元素的`name`一律会被设置为`view`
+
+可在`MiniParser.defaultTransMap`上追加映射或者替换为自己的映射配置
+
+```javascript
+transMap:{
+    ...MiniParser.defaultTransMap,
+    article: 'rich-text'
+}
+// or
+transMap:{
+    video: 'video',
+    img: 'image'
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
