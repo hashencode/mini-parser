@@ -16,7 +16,8 @@
            style="{{item.attrs.style}}"></video>
     <!-- 链接 -->
     <view wx:elif="{{item.name==='link'}}"
-          class="mini-parser-link {{item.attrs.class}}"
+          class="mini-parser-link mini-parser-{{item.display}} {{item.attrs.class}}"
+          style="{{item.attrs.style}}"
           data-attrs="{{item.attrs}}"
           bind:tap="handleLinkTap">
       <render wx:if="{{item.children}}" html="{{item.children}}" containerWidth="{{containerWidth}}"></render>
