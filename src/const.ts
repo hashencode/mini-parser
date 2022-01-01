@@ -50,7 +50,7 @@ export const htmlOnlyRegexp: HtmlOnlyType = [
 ];
 
 // 获取行内元素值正则
-export const styleWidthValueRegexp = /(\d*)(.*)/;
+export const styleWidthValueRegexp = /(\d*\.?\d*)(.*)/;
 
 // 转义字典
 export const decodeMap: DecodeMapType = {

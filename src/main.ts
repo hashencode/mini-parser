@@ -145,11 +145,13 @@ class MiniParser {
     styleArray.forEach((styleItem) => {
       if (!styleItem) return;
       const [styleKey, styleValue = ""] = styleItem.split(":");
+
       if (styleKey) {
         const keyStr = styleKey.trim();
         const valueStr = styleValue.trim();
         // 进行自适应需要获取到外层宽度
         if (adaptive && containerWidth) {
+          let newValueStr = "";
           // 获取到数值和单位
           valueStr.replace(
             styleWidthValueRegexp,
@@ -158,15 +160,16 @@ class MiniParser {
                 // 如果当前宽度小于容器宽度，则进行自适应处理
                 if (keyStr === "width" && +digital > containerWidth) {
                   scalingRatio = containerWidth / +digital;
-                  styleObj.width = `${containerWidth}${unit}`;
+                  newValueStr = `${containerWidth}${unit}`;
                 } else if (keyStr === "height" && scalingRatio > 0) {
                   // 如果存在宽度的缩放比例，则对高度进行缩放
-                  styleObj.height = `${digital * scalingRatio}${unit}`;
+                  newValueStr = `${digital * scalingRatio}${unit}`;
                 }
               }
               return "";
             }
           );
+          styleObj[keyStr] = newValueStr || valueStr;
         } else {
           styleObj[keyStr] = valueStr;
         }
