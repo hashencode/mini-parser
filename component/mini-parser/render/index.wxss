@@ -1,0 +1,22 @@
+.mini-parser-inline,
+.mini-parser-text,
+.mini-parser-link{
+  display: inline;
+}
+
+.mini-parser-block{
+  width:100%;
+}
+
+.mini-parser-inline-block{
+  display: inline-block;
+}
+
+.mini-parser-flex{
+  display: flex;
+}
+
+.mini-parser-origin-strong{
+  font-weight: bold;
+}
+
