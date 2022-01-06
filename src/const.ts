@@ -1,4 +1,4 @@
-import { DecodeMapType, HtmlOnlyType } from "./types";
+import { ObjType, HtmlOnlyType } from "./types";
 
 // 默认额外数据
 export const defaultExtraData = { containerWidth: 0 };
@@ -53,7 +53,7 @@ export const htmlOnlyRegexp: HtmlOnlyType = [
 export const styleWidthValueRegexp = /(\d*\.?\d*)(.*)/;
 
 // 转义字典
-export const decodeMap: DecodeMapType = {
+export const decodeMap: ObjType = {
   lt: "<",
   gt: ">",
   quot: '"',
