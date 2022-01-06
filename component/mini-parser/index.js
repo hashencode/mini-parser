@@ -4,13 +4,13 @@ Component({
   },
   properties: {
     html: { type: String, optionalTypes: [Array] },
-    config: { type: Object },
+    config: { type: Object, default: { adaptive: true } },
   },
   data: {
     containerWidth: 0,
   },
   ready() {
-    const { adaptive = true } = this.config;
+    const { adaptive = true } = this.data.config;
     if (adaptive) {
       // 获取外层容器宽度
       wx.createSelectorQuery()
