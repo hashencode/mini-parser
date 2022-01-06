@@ -12,12 +12,7 @@ import {
   startElementRegexp,
   styleWidthValueRegexp,
 } from "./const";
-import {
-  AttrsMapType,
-  ConstructorType,
-  JsonDataType,
-  StyleObjType,
-} from "./types";
+import { AttrsMapType, ConstructorType, JsonDataType, ObjType } from "./types";
 
 class MiniParser {
   private readonly config;
@@ -95,8 +90,9 @@ class MiniParser {
 
   // 将元素名进行转换
   public formatElementName(name: string): string {
-    const { transMap = defaultTransMap } = this.config;
-    if (name in transMap) return transMap[name];
+    const { transMap = {} } = this.config;
+    const curTransMap: ObjType = { ...defaultTransMap, ...transMap };
+    if (name in curTransMap) return curTransMap[name];
     return "view";
   }
 
@@ -267,7 +263,7 @@ class MiniParser {
         const attrs = this.formatAttributes(attrString, name);
         // 配置display属性
         let display = blockElements.includes(name) ? "block" : "inline";
-        const styleObj = attrs.styleObj as StyleObjType;
+        const styleObj = attrs.styleObj as ObjType;
         if (styleObj) {
           const { display: styleDisplay } = styleObj;
           if (styleDisplay) display = styleDisplay;
@@ -362,4 +358,4 @@ class MiniParser {
   }
 }
 
-export { MiniParser, defaultIgnoreElements, defaultTransMap };
+export { MiniParser, defaultIgnoreElements };

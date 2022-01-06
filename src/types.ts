@@ -12,16 +12,11 @@ export interface ConstructorType {
 
 // 元素属性类型
 export interface AttrsMapType {
-  [key: string]: string | boolean | object | StyleObjType;
+  [key: string]: string | boolean | object | ObjType;
 }
 
 // 行内样式对象类型
-export interface StyleObjType {
-  [key: string]: string;
-}
-
-// 转义字典类型
-export interface DecodeMapType {
+export interface ObjType {
   [key: string]: string;
 }
 
@@ -45,5 +40,5 @@ export type ConfigType = {
   decodeAttributeValue?: boolean; // 对属性值进行反转义
   format?: { [key: string]: { [key: string]: any } }; // 属性格式化
   ignoredElement?: string[]; // 忽略解析的元素类型
-  transMap?: { [key: string]: string }; // 元素转换对应表
+  transMap?: ObjType; // 元素转换对应表
 };
