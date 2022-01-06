@@ -1,10 +1,10 @@
 .mini-parser-inline,
-.mini-parser-text,
-.mini-parser-link{
+.mini-parser-text{
   display: inline;
 }
 
 .mini-parser-block{
+  display: block;
   width:100%;
 }
 

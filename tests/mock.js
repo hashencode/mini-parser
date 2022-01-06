@@ -92,9 +92,9 @@ exports.config = {
   },
   except: [
     {
-      id: "0_0_view",
+      id: "0_0_image",
       type: "selfClosing",
-      name: "view",
+      name: "image",
       originName: "img",
       attrs: {
         class: "test-class",

@@ -10,17 +10,20 @@ Component({
     containerWidth: 0,
   },
   ready() {
-    // 获取外层容器宽度
-    wx.createSelectorQuery()
-      .in(this)
-      .select(".mini-parser")
-      .boundingClientRect((res) => {
-        if (res.width > 0) {
-          this.setData({
-            containerWidth: res.width,
-          });
-        }
-      })
-      .exec();
+    const { adaptive = true } = this.config;
+    if (adaptive) {
+      // 获取外层容器宽度
+      wx.createSelectorQuery()
+        .in(this)
+        .select(".mini-parser")
+        .boundingClientRect((res) => {
+          if (res.width > 0) {
+            this.setData({
+              containerWidth: res.width,
+            });
+          }
+        })
+        .exec();
+    }
   },
 });

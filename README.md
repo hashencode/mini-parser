@@ -102,17 +102,11 @@ ignoredElement:['iframe', 'table', '...']
 
 影响转换后的元素对象数据中的`name`值，用于判断使用何种小程序元素去替换该元素，不存在表内的元素的`name`一律会被设置为`view`
 
-可在`MiniParser.defaultTransMap`上追加映射或者替换为自己的映射配置
+可在`MiniParser.defaultTransMap`上追加映射
 
 ```javascript
 transMap:{
-    ...MiniParser.defaultTransMap,
     article: 'rich-text'
-}
-// or
-transMap:{
-    video: 'video',
-    img: 'image'
 }
 ```
 
