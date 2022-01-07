@@ -71,4 +71,5 @@ export const decodeMap: ObjType = {
   rdquo: "”",
   bull: "•",
   hellip: "…",
+  amp: "&",
 };
