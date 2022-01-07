@@ -4,7 +4,7 @@ Component({
   },
   properties: {
     html: { type: String, optionalTypes: [Array] },
-    config: { type: Object, default: { adaptive: true } },
+    config: { type: Object, value: { adaptive: true } },
   },
   data: {
     containerWidth: 0,
