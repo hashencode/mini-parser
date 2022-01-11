@@ -11,7 +11,13 @@ import {
   startElementRegexp,
   styleWidthValueRegexp,
 } from "./const";
-import { AttrsMapType, ConstructorType, JsonDataType, ObjType } from "./types";
+import {
+  AttrsMapType,
+  ConstructorType,
+  JsonDataType,
+  JsonDataTypeDev,
+  ObjType,
+} from "./types";
 
 class MiniParser {
   private readonly config;
@@ -24,14 +30,13 @@ class MiniParser {
   }
 
   // 处理步骤
-  steps(html: string) {
+  steps(html: string): any {
     const cleanHtml = this.cleanHtml(html);
     const jsonData = this.htmlToJson(cleanHtml);
     return this.jsonToSkeleton(jsonData);
   }
 
-  cleanHtml(html: string) {
-    if (!html) return "";
+  cleanHtml(html: string): string {
     htmlOnlyRegexp.forEach((item) => {
       const [_regexp, replacement] = item;
       html = html.replace(_regexp, replacement);
@@ -286,13 +291,14 @@ class MiniParser {
   }
 
   // 结构数据生成器
-  skeletonGenerator(jsonData: JsonDataType, parentId = 0): any {
+  skeletonGenerator(jsonData: JsonDataTypeDev[], parentId = 0): JsonDataType[] {
     if (jsonData.length <= 0) return [];
     let count = 0;
     const skeleton = [];
     while (count < jsonData.length) {
       const { genKey, type, ...current } = jsonData[count];
-      const id = `${parentId}_${count}_${current.name}`;
+      const { name } = current;
+      const id = `${parentId}_${count}_${name}`;
       // 优化输出数据的type
       const newType = ["start", "end"].includes(type) ? "default" : type;
       // 通过起始标签的genKey去寻找对应的闭合标签
@@ -324,7 +330,7 @@ class MiniParser {
   }
 
   // json数据转结构数据
-  jsonToSkeleton(jsonData: JsonDataType) {
+  jsonToSkeleton(jsonData: JsonDataTypeDev[]): JsonDataType[] {
     const keyMap: number[] = [];
 
     // 对起始和闭合标签进行标注，便于梳理结构

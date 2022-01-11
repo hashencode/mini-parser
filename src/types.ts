@@ -24,14 +24,17 @@ export interface ObjType {
 export type HtmlOnlyType = [RegExp, string][];
 
 // 转换后的数据结构
+export interface JsonDataTypeDev extends JsonDataType {
+  genKey?: number;
+  type: string;
+}
+
 export type JsonDataType = {
   attrs?: AttrsMapType;
-  children?: JsonDataType;
+  children?: JsonDataType[];
   display?: string;
-  genKey?: number;
   name: string;
-  type: string;
-}[];
+};
 
 // 配置项
 export type ConfigType = {
