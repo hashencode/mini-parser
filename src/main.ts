@@ -25,13 +25,13 @@ class MiniParser {
   }
 
   // 处理步骤
-  public steps(html: string) {
+  steps(html: string) {
     const cleanHtml = this.cleanHtml(html);
     const jsonData = this.htmlToJson(cleanHtml);
     return this.jsonToSkeleton(jsonData);
   }
 
-  public cleanHtml(html: string) {
+  cleanHtml(html: string) {
     if (!html) return "";
     htmlOnlyRegexp.forEach((item) => {
       const [_regexp, replacement] = item;
@@ -41,7 +41,7 @@ class MiniParser {
   }
 
   // 替换被转义的字符串
-  public decodeHtml(html: string) {
+  decodeHtml(html: string) {
     if (!html) return "";
     let index = html.indexOf("&");
     while (index !== -1) {
@@ -76,20 +76,20 @@ class MiniParser {
   }
 
   // 是否为合规元素
-  public isInvalidElement(name: string): boolean {
+  isInvalidElement(name: string): boolean {
     const { ignoredElement = defaultIgnoreElements } = this.config;
     return ignoredElement.includes(name);
   }
 
   // 是否是自闭合标签
-  public isSelfClosingElement(str: string, name: string): boolean {
+  isSelfClosingElement(str: string, name: string): boolean {
     return (
       selfClosingElementRegexp.test(str) || selfClosingElements.includes(name)
     );
   }
 
   // 将元素名进行转换
-  public formatElementName(name: string): string {
+  formatElementName(name: string): string {
     const { transMap = {} } = this.config;
     const curTransMap: ObjType = { ...defaultTransMap, ...transMap };
     if (name in curTransMap) return curTransMap[name];
@@ -97,7 +97,7 @@ class MiniParser {
   }
 
   // 根据配置项处理属性
-  public attributeProcessor(
+  attributeProcessor(
     attrsMap: { [key: string]: any },
     elementName: string
   ): AttrsMapType {
@@ -131,7 +131,7 @@ class MiniParser {
   }
 
   // 处理样式属性
-  public styleProcessor(valueStr: string) {
+  styleProcessor(valueStr: string) {
     const styleArray = valueStr.split(";");
     const styleObj: { [key: string]: string } = {};
     const { adaptive = true } = this.config;
@@ -179,7 +179,7 @@ class MiniParser {
   }
 
   // 将属性字符串转为对象
-  public formatAttributes(str: string, elementName: string): AttrsMapType {
+  formatAttributes(str: string, elementName: string): AttrsMapType {
     if (!str) return {};
     const that = this;
 
@@ -207,12 +207,12 @@ class MiniParser {
   }
 
   // 更新解析字符串
-  public updateHtmlStr(decodedHtml: string, str: string) {
+  updateHtmlStr(decodedHtml: string, str: string) {
     return decodedHtml.substring(str.length);
   }
 
   // 解析html字符串并转为json结构
-  public htmlToJson(decodedHtml: string) {
+  htmlToJson(decodedHtml: string) {
     const jsonData = [];
 
     while (decodedHtml) {
@@ -235,8 +235,8 @@ class MiniParser {
         // 将当前数据追加到数组
         jsonData.push({
           type: selfClosing ? "selfClosing" : "end",
-          name: this.formatElementName(name),
-          originName: name,
+          name,
+          expectedName: this.formatElementName(name),
         });
         continue;
       }
@@ -271,8 +271,8 @@ class MiniParser {
         // 将当前数据追加到数组
         jsonData.push({
           type: selfClosing ? "selfClosing" : "start",
-          name: this.formatElementName(name),
-          originName: name,
+          name,
+          expectedName: this.formatElementName(name),
           attrs,
           display,
         });
@@ -287,7 +287,7 @@ class MiniParser {
       jsonData.push({
         type: "text",
         name: "text",
-        originName: "text",
+        expectedName: "text",
         display: "inline",
         // 允许使用配置项的文字转换函数
         attrs: this.attributeProcessor({ content }, "text"),
@@ -298,7 +298,7 @@ class MiniParser {
   }
 
   // 结构数据生成器
-  public skeletonGenerator(jsonData: JsonDataType, parentId = 0): any {
+  skeletonGenerator(jsonData: JsonDataType, parentId = 0): any {
     if (jsonData.length <= 0) return [];
     let count = 0;
     const skeleton = [];
@@ -336,7 +336,7 @@ class MiniParser {
   }
 
   // json数据转结构数据
-  public jsonToSkeleton(jsonData: JsonDataType) {
+  jsonToSkeleton(jsonData: JsonDataType) {
     const keyMap: number[] = [];
 
     // 对起始和闭合标签进行标注，便于梳理结构

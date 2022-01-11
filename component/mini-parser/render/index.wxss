@@ -16,7 +16,14 @@
   display: flex;
 }
 
-.mini-parser-origin-strong{
+.mini-parser-origin-b,
+.mini-parser-origin-h1,
+.mini-parser-origin-h2,
+.mini-parser-origin-h3,
+.mini-parser-origin-h4,
+.mini-parser-origin-h5,
+.mini-parser-origin-h6,
+.mini-parser-origin-strong {
   font-weight: bold;
 }
 

@@ -15,7 +15,7 @@ export interface AttrsMapType {
   [key: string]: string | boolean | object | ObjType;
 }
 
-// 行内样式对象类型
+// 默认对象类型
 export interface ObjType {
   [key: string]: string;
 }
@@ -30,7 +30,7 @@ export type JsonDataType = {
   display?: string;
   genKey?: number;
   name: string;
-  originName: string;
+  expectedName: string;
   type: string;
 }[];
 
