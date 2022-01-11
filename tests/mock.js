@@ -4,7 +4,6 @@ exports.elementType = {
   except: [
     {
       id: "0_0_br",
-      expectedName: "view",
       name: "br",
       attrs: {},
       display: "inline",
@@ -12,7 +11,6 @@ exports.elementType = {
     },
     {
       id: "0_1_div",
-      expectedName: "view",
       name: "div",
       attrs: {},
       display: "block",
@@ -20,7 +18,6 @@ exports.elementType = {
     },
     {
       id: "0_2_video",
-      expectedName: "video",
       name: "video",
       attrs: {},
       display: "inline",
@@ -29,7 +26,6 @@ exports.elementType = {
     },
     {
       id: "0_4_img",
-      expectedName: "image",
       name: "img",
       attrs: {},
       display: "inline",
@@ -37,7 +33,6 @@ exports.elementType = {
     },
     {
       id: "0_5_text",
-      expectedName: "text",
       name: "text",
       attrs: {
         content: "汉字Aa01!@#$%",
@@ -54,7 +49,6 @@ exports.elementAttrs = {
   except: [
     {
       id: "0_0_img",
-      expectedName: "image",
       name: "img",
       attrs: {
         class: "test-class",
@@ -94,7 +88,6 @@ exports.config = {
     {
       id: "0_0_img",
       type: "selfClosing",
-      expectedName: "image",
       name: "img",
       attrs: {
         class: "test-class",
@@ -107,7 +100,6 @@ exports.config = {
     {
       id: "0_1_text",
       type: "text",
-      expectedName: "text",
       name: "text",
       attrs: {
         content: "test word 一二三 $%#@",
@@ -117,7 +109,6 @@ exports.config = {
     {
       id: "0_2_br",
       type: "selfClosing",
-      expectedName: "rich-text",
       name: "br",
       attrs: {},
       display: "inline",
@@ -131,7 +122,6 @@ exports.domLevel = {
   except: [
     {
       id: "0_0_div",
-      expectedName: "view",
       name: "div",
       attrs: {},
       display: "block",
@@ -139,7 +129,6 @@ exports.domLevel = {
       children: [
         {
           id: "0_0_span",
-          expectedName: "view",
           name: "span",
           attrs: {},
           display: "inline",
@@ -147,7 +136,6 @@ exports.domLevel = {
           children: [
             {
               id: "0_0_text",
-              expectedName: "text",
               name: "text",
               attrs: {
                 content: "X",
@@ -157,7 +145,6 @@ exports.domLevel = {
             },
             {
               id: "0_1_img",
-              expectedName: "image",
               name: "img",
               attrs: {
                 src: "",
@@ -178,7 +165,6 @@ exports.specialHtml = {
   except: [
     {
       id: "0_0_text",
-      expectedName: "text",
       name: "text",
       attrs: {
         content: "<",
@@ -188,7 +174,6 @@ exports.specialHtml = {
     },
     {
       id: "0_1_br",
-      expectedName: "view",
       name: "br",
       attrs: {},
       display: "inline",

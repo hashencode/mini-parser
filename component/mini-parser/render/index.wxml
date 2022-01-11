@@ -1,36 +1,33 @@
 <block wx:if="{{parserData}}">
   <block wx:for="{{parserData}}" wx:key="id">
     <!-- 文字 -->
-    <text wx:if="{{item.expectedName==='text'}}" class="mini-parser-text {{item.attrs.class}}">{{item.attrs.content}}</text>
+    <text wx:if="{{item.name==='text'}}" class="mini-parser-text {{item.attrs.class}}">{{item.attrs.content}}</text>
     <!-- 图片 -->
-    <image wx:elif="{{item.expectedName==='image'}}"
+    <image wx:elif="{{item.name==='img'}}"
            class="mini-parser-image {{item.attrs.class}}"
            src="{{item.attrs.src}}"
            style="{{item.attrs.style}}"></image>
     <!-- 视频 -->
-    <video wx:elif="{{item.expectedName==='video'}}"
+    <video wx:elif="{{item.name==='video'}}"
            class="mini-parser-video {{item.attrs.class}}"
            src="{{item.attrs.src}}"
            style="{{item.attrs.style}}"></video>
     <!-- 链接 -->
-    <view wx:elif="{{item.expectedName==='link'}}"
+    <view wx:elif="{{item.name==='a'}}"
           class="mini-parser-link mini-parser-{{item.display}} {{item.attrs.class}}"
           style="{{item.attrs.style}}"
           data-attrs="{{item.attrs}}"
           bind:tap="handleLinkTap">
       <render wx:if="{{item.children}}" html="{{item.children}}" containerWidth="{{containerWidth}}"></render>
     </view>
-    <!-- 除上述类型以外的元素-->
-    <block wx:else>
-      <!-- 换行符 -->
-      <text wx:if="{{item.name==='br'}}" class="mini-parser-br {{item.attrs.class}}">\n</text>
-      <!-- 默认 -->
-      <view wx:else
-            class="mini-parser-origin-{{item.name}} mini-parser-view mini-parser-{{item.display}} {{item.attrs.class}}"
-            style="{{item.attrs.style}}">
-        <render wx:if="{{item.children}}" html="{{item.children}}" containerWidth="{{containerWidth}}"></render>
-      </view>
-    </block>
+    <!-- 换行符 -->
+    <text wx:elif="{{item.name==='br'}}" class="mini-parser-br {{item.attrs.class}}">\n</text>
+    <!-- 默认 -->
+    <view wx:else
+          class="mini-parser-origin-{{item.name}} mini-parser-view mini-parser-{{item.display}} {{item.attrs.class}}"
+          style="{{item.attrs.style}}">
+      <render wx:if="{{item.children}}" html="{{item.children}}" containerWidth="{{containerWidth}}"></render>
+    </view>
   </block>
 </block>
 

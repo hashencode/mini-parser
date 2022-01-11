@@ -30,7 +30,6 @@ export type JsonDataType = {
   display?: string;
   genKey?: number;
   name: string;
-  expectedName: string;
   type: string;
 }[];
 

@@ -4,7 +4,6 @@ import {
   blockElements,
   decodeMap,
   defaultIgnoreElements,
-  defaultTransMap,
   endElementRegexp,
   htmlOnlyRegexp,
   selfClosingElementRegexp,
@@ -86,14 +85,6 @@ class MiniParser {
     return (
       selfClosingElementRegexp.test(str) || selfClosingElements.includes(name)
     );
-  }
-
-  // 将元素名进行转换
-  formatElementName(name: string): string {
-    const { transMap = {} } = this.config;
-    const curTransMap: ObjType = { ...defaultTransMap, ...transMap };
-    if (name in curTransMap) return curTransMap[name];
-    return "view";
   }
 
   // 根据配置项处理属性
@@ -236,7 +227,6 @@ class MiniParser {
         jsonData.push({
           type: selfClosing ? "selfClosing" : "end",
           name,
-          expectedName: this.formatElementName(name),
         });
         continue;
       }
@@ -272,7 +262,6 @@ class MiniParser {
         jsonData.push({
           type: selfClosing ? "selfClosing" : "start",
           name,
-          expectedName: this.formatElementName(name),
           attrs,
           display,
         });
@@ -287,7 +276,6 @@ class MiniParser {
       jsonData.push({
         type: "text",
         name: "text",
-        expectedName: "text",
         display: "inline",
         // 允许使用配置项的文字转换函数
         attrs: this.attributeProcessor({ content }, "text"),
