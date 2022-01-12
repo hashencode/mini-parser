@@ -47,7 +47,6 @@ npm install mini-program-parser
 | decodeAttributeValue | 对属性值进行反转义 | boolean                   | true                  |
 | format               | 属性格式化     | -                         | -                     |
 | ignoredElement       | 无需解析的元素类型 | string[]                  | defaultIgnoreElements |
-| transMap             | 元素转换映射表   | { [key: string]: string } | defaultTransMap       |
 
 ### adaptive
 
@@ -94,20 +93,6 @@ format: {
 ignoredElement:[...MiniParser.defaultIgnoreElements, 'iframe']
 // or
 ignoredElement:['iframe', 'table', '...']
-```
-
-### transMap
-
-元素转换映射表
-
-影响转换后的元素对象数据中的`name`值，用于判断使用何种小程序元素去替换该元素，不存在表内的元素的`name`一律会被设置为`view`
-
-可在`MiniParser.defaultTransMap`上追加映射
-
-```javascript
-transMap:{
-    article: 'rich-text'
-}
 ```
 
 

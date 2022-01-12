@@ -3,14 +3,14 @@ Component({
     addGlobalClass: true, // page样式影响组件内样式
   },
   properties: {
-    html: { type: String, optionalTypes: [Array] },
-    config: { type: Object },
+    html: { type: String },
+    config: { type: Object, value: { adaptive: true } },
   },
   data: {
     containerWidth: 0,
   },
   ready() {
-    const { adaptive = true } = this.config;
+    const { adaptive = true } = this.data.config;
     if (adaptive) {
       // 获取外层容器宽度
       wx.createSelectorQuery()

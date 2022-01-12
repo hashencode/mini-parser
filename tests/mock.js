@@ -3,17 +3,15 @@ exports.elementType = {
   html: "<!--hello--><head /><title></title><br/><div/><video></video><img/>汉字Aa01!@#$%",
   except: [
     {
-      id: "0_0_view",
-      name: "view",
-      originName: "br",
+      id: "0_0_br",
+      name: "br",
       attrs: {},
       display: "inline",
       type: "selfClosing",
     },
     {
-      id: "0_1_view",
-      name: "view",
-      originName: "div",
+      id: "0_1_div",
+      name: "div",
       attrs: {},
       display: "block",
       type: "selfClosing",
@@ -21,16 +19,14 @@ exports.elementType = {
     {
       id: "0_2_video",
       name: "video",
-      originName: "video",
       attrs: {},
       display: "inline",
       type: "default",
       children: [],
     },
     {
-      id: "0_4_image",
-      name: "image",
-      originName: "img",
+      id: "0_4_img",
+      name: "img",
       attrs: {},
       display: "inline",
       type: "selfClosing",
@@ -38,7 +34,6 @@ exports.elementType = {
     {
       id: "0_5_text",
       name: "text",
-      originName: "text",
       attrs: {
         content: "汉字Aa01!@#$%",
       },
@@ -53,9 +48,8 @@ exports.elementAttrs = {
   html: '<img class="test-class" id="test-id" src="https://xxx.com" style="display:flex;align-items: center" alt="">',
   except: [
     {
-      id: "0_0_image",
-      name: "image",
-      originName: "img",
+      id: "0_0_img",
+      name: "img",
       attrs: {
         class: "test-class",
         id: "test-id",
@@ -92,10 +86,9 @@ exports.config = {
   },
   except: [
     {
-      id: "0_0_image",
+      id: "0_0_img",
       type: "selfClosing",
-      name: "image",
-      originName: "img",
+      name: "img",
       attrs: {
         class: "test-class",
         id: "overwrite-id",
@@ -108,17 +101,15 @@ exports.config = {
       id: "0_1_text",
       type: "text",
       name: "text",
-      originName: "text",
       attrs: {
         content: "test word 一二三 $%#@",
       },
       display: "inline",
     },
     {
-      id: "0_2_rich-text",
+      id: "0_2_br",
       type: "selfClosing",
-      name: "rich-text",
-      originName: "br",
+      name: "br",
       attrs: {},
       display: "inline",
     },
@@ -130,17 +121,15 @@ exports.domLevel = {
   html: "<div><span>X<img src=''></span></div>",
   except: [
     {
-      id: "0_0_view",
-      name: "view",
-      originName: "div",
+      id: "0_0_div",
+      name: "div",
       attrs: {},
       display: "block",
       type: "default",
       children: [
         {
-          id: "0_0_view",
-          name: "view",
-          originName: "span",
+          id: "0_0_span",
+          name: "span",
           attrs: {},
           display: "inline",
           type: "default",
@@ -148,7 +137,6 @@ exports.domLevel = {
             {
               id: "0_0_text",
               name: "text",
-              originName: "text",
               attrs: {
                 content: "X",
               },
@@ -156,9 +144,8 @@ exports.domLevel = {
               type: "text",
             },
             {
-              id: "0_1_image",
-              name: "image",
-              originName: "img",
+              id: "0_1_img",
+              name: "img",
               attrs: {
                 src: "",
               },
@@ -179,7 +166,6 @@ exports.specialHtml = {
     {
       id: "0_0_text",
       name: "text",
-      originName: "text",
       attrs: {
         content: "<",
       },
@@ -187,9 +173,8 @@ exports.specialHtml = {
       type: "text",
     },
     {
-      id: "0_1_view",
-      name: "view",
-      originName: "br",
+      id: "0_1_br",
+      name: "br",
       attrs: {},
       display: "inline",
       type: "selfClosing",
