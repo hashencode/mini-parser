@@ -18,7 +18,15 @@
           style="{{item.attrs.style}}"
           data-attrs="{{item.attrs}}"
           bind:tap="handleLinkTap">
-      <render wx:if="{{item.children}}" html="{{item.children}}" containerWidth="{{containerWidth}}"></render>
+      <render wx:if="{{item.children}}" parsedData="{{item.children}}"></render>
+    </view>
+    <!-- 换行符 -->
+    <view wx:elif="{{item.name==='table'}}" class="mini-parser-table {{item.attrs.class}}">
+      <view wx:for="{{item.children}}" wx:for-item="tr" wx:key="id" class="mini-parser-tr {{tr.attrs.class}}">
+        <view wx:for="{{tr.children}}" wx:for-item="td" wx:key="id" class="mini-parser-td {{td.attrs.class}}">
+          <render wx:if="{{td.children}}" parsedData="{{td.children}}"></render>
+        </view>
+      </view>
     </view>
     <!-- 换行符 -->
     <text wx:elif="{{item.name==='br'}}" class="mini-parser-br {{item.attrs.class}}">\n</text>
@@ -26,9 +34,8 @@
     <view wx:else
           class="mini-parser-origin-{{item.name}} mini-parser-view mini-parser-{{item.display}} {{item.attrs.class}}"
           style="{{item.attrs.style}}">
-      <render wx:if="{{item.children}}" html="{{item.children}}" containerWidth="{{containerWidth}}"></render>
+      <render wx:if="{{item.children}}" parsedData="{{item.children}}"></render>
     </view>
   </block>
 </block>
-
 

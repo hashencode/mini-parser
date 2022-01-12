@@ -3,7 +3,7 @@ Component({
     addGlobalClass: true, // page样式影响组件内样式
   },
   properties: {
-    html: { type: String, optionalTypes: [Array] },
+    html: { type: String },
     config: { type: Object, value: { adaptive: true } },
   },
   data: {
