@@ -44,7 +44,6 @@ npm install mini-program-parser
 | 属性                   | 说明        | 类型                        | 默认值                   |
 | -------------------- | --------- | ------------------------- | --------------------- |
 | adaptive             | 宽度自适应模式   | boolean                   | true                  |
-| decodeAttributeValue | 对属性值进行反转义 | boolean                   | true                  |
 | format               | 属性格式化     | -                         | -                     |
 | ignoredElement       | 无需解析的元素类型 | string[]                  | defaultIgnoreElements |
 
@@ -53,12 +52,6 @@ npm install mini-program-parser
 宽度自适应模式
 
 默认开启，当元素的宽度超过外层容器的宽度时，脚本会自动修改其宽度为容器宽度，并等比缩放其高度（如果有设置的话）
-
-### decodeAttributeValue
-
-对属性值进行反转义
-
-默认开启，从数据库读取的数据通常会对特殊字符进行转义，但实际使用时需要将其进行反转义，因为 html 文本被保存在`content`属性中，所以文本也会被反转义
 
 ### format
 
