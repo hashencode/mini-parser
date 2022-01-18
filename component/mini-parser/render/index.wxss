@@ -24,9 +24,11 @@
   border: 2rpx solid #dcdcdc;
   border-width: 2rpx 0 0 2rpx;
 }
+
 .mini-parser-tr {
   display: table-row;
 }
+
 .mini-parser-td {
   display: table-cell;
   text-align: start;

@@ -20,7 +20,7 @@
           bind:tap="handleLinkTap">
       <render wx:if="{{item.children}}" parsedData="{{item.children}}"></render>
     </view>
-    <!-- 换行符 -->
+    <!-- 表格 -->
     <view wx:elif="{{item.name==='table'}}" class="mini-parser-table {{item.attrs.class}}">
       <view wx:for="{{item.children}}" wx:for-item="tr" wx:key="id" class="mini-parser-tr {{tr.attrs.class}}">
         <view wx:for="{{tr.children}}" wx:for-item="td" wx:key="id" class="mini-parser-td {{td.attrs.class}}">

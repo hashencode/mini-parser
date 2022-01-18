@@ -17,7 +17,7 @@ Component({
         .in(this)
         .select(".mini-parser")
         .boundingClientRect((res) => {
-          if (res.width > 0) {
+          if (res && res.width > 0) {
             this.setData({
               containerWidth: res.width,
             });
