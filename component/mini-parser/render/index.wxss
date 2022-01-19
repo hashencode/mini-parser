@@ -48,3 +48,32 @@
   font-weight: bold;
 }
 
+.mini-parser-origin-h1 {
+  margin: 0.67em 0;
+}
+
+.mini-parser-origin-h2 {
+  margin: 0.75em 0;
+}
+
+.mini-parser-origin-h3 {
+  margin: 0.83em 0;
+}
+
+.mini-parser-origin-h4 {
+  margin: 1.12em 0;
+}
+
+.mini-parser-origin-h5 {
+  margin: 1.5em 0;
+}
+
+.mini-parser-origin-h6 {
+  margin: 1.67em 0;
+}
+
+.mini-parser-link {
+  color: deepskyblue;
+  word-break: break-all;
+  overflow: auto;
+}
