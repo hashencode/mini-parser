@@ -77,3 +77,35 @@
   word-break: break-all;
   overflow: auto;
 }
+
+.mini-parser-origin-ul,
+.mini-parser-origin-ol {
+  padding-left: 0.5em;
+}
+
+.mini-parser-origin-ul .mini-parser-origin-li {
+  display: flex;
+  align-items: baseline;
+}
+
+.mini-parser-origin-ul .mini-parser-origin-li:before {
+  content: '';
+  display: inline-block;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #000000;
+  transform: translateY(-50%);
+  margin-right: 0.5em;
+}
+
+.mini-parser-origin-ol {
+  counter-reset: xcounter;
+}
+
+.mini-parser-origin-ol .mini-parser-origin-li:before {
+  content: counter(xcounter) '.';
+  counter-increment: xcounter;
+  margin-right: 0.5em;
+  transform: translateY(2rpx);
+}
