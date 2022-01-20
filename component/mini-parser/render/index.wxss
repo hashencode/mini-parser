@@ -94,9 +94,10 @@
   width: 10rpx;
   height: 10rpx;
   border-radius: 50%;
-  background: #000000;
+  background-color: #000000;
   transform: translateY(-50%);
   margin-right: 0.5em;
+  flex-shrink: 0;
 }
 
 .mini-parser-origin-ol {
