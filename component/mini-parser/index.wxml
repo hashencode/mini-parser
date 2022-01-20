@@ -1,8 +1,7 @@
-<view class="mini-parser" wx:if="{{html}}">
-  <render wx:if="{{!adaptive || containerWidth>0}}"
+<view class="mini-parser">
+  <render wx:if="{{renderVisible}}"
           html="{{html}}"
           config="{{config}}"
           containerWidth="{{containerWidth}}">
   </render>
 </view>
-
