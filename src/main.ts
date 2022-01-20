@@ -97,16 +97,7 @@ class MiniParser {
     attrsMap: { [key: string]: any },
     elementName: string
   ): AttrsMapType {
-    const { format = {}, decodeAttributeValue = true } = this.config;
-
-    // 如果需要进行反转义
-    if (decodeAttributeValue) {
-      Object.keys(attrsMap).forEach((key) => {
-        if (typeof attrsMap[key] === "string") {
-          attrsMap[key] = this.decodeHtml(attrsMap[key]);
-        }
-      });
-    }
+    const { format = {} } = this.config;
 
     // 如果存在对应的格式化配置
     if (format[elementName]) {
@@ -186,7 +177,9 @@ class MiniParser {
       function (_match, name: string, value: string) {
         const args = Array.prototype.slice.call(arguments);
         if (args.length >= 3) {
-          const attrValue = value ? value.replace(/(^|[^\\])"/g, '$1\\"') : "";
+          const attrValue = value
+            ? that.decodeHtml(value).replace(/(^|[^\\])"/g, '$1\\"')
+            : "";
           // 将属性值进行格式化，样式额外处理为对象
           const { styleObj, styleStr } = that.styleProcessor(attrValue);
           if (name === "style") {
@@ -277,6 +270,7 @@ class MiniParser {
       const index = decodedHtml.indexOf("<");
       const isExist = index < 0;
       let content = isExist ? decodedHtml : decodedHtml.substring(0, index);
+      content = this.decodeHtml(content);
       decodedHtml = isExist ? "" : decodedHtml.substring(index);
       jsonData.push({
         type: "text",

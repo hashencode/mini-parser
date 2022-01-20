@@ -8,22 +8,31 @@ Component({
   },
   data: {
     containerWidth: 0,
+    renderVisible: false,
   },
   ready() {
-    const { adaptive = true } = this.data.config;
-    if (adaptive) {
-      // 获取外层容器宽度
-      wx.createSelectorQuery()
-        .in(this)
-        .select(".mini-parser")
-        .boundingClientRect((res) => {
-          if (res.width > 0) {
-            this.setData({
-              containerWidth: res.width,
-            });
-          }
-        })
-        .exec();
+    const { html, config } = this.data;
+    const { adaptive = true } = config;
+    if (html) {
+      if (adaptive) {
+        // 获取外层容器宽度
+        wx.createSelectorQuery()
+          .in(this)
+          .select(".mini-parser")
+          .boundingClientRect((res) => {
+            if (res && res.width > 0) {
+              this.setData({
+                containerWidth: res.width,
+                renderVisible: true,
+              });
+            }
+          })
+          .exec();
+      } else {
+        this.setData({
+          renderVisible: true,
+        });
+      }
     }
   },
 });
