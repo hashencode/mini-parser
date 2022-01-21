@@ -1,7 +1,7 @@
 <view class="mini-parser">
-  <render wx:if="{{renderVisible}}"
-          html="{{html}}"
-          config="{{config}}"
-          containerWidth="{{containerWidth}}">
-  </render>
+    <render wx:if="{{renderVisible}}"
+            html="{{html}}"
+            config="{{config}}"
+            containerWidth="{{containerWidth}}">
+    </render>
 </view>

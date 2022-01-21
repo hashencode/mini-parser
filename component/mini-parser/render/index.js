@@ -1,3 +1,5 @@
+import { MiniParser } from "mini-program-parser";
+
 Component({
   options: {
     addGlobalClass: true, // page样式影响组件内样式
@@ -23,24 +25,6 @@ Component({
       });
     },
     parsedData(data) {
-      if (!data) return;
-      // 特殊处理表格标签
-      if (data.length > 0) {
-        data.forEach((dataItem) => {
-          const { name, children } = dataItem;
-          if (name === "table" && children) {
-            const wrapper = children.filter((item) =>
-              ["thead", "tbody"].includes(item.name)
-            );
-            if (wrapper) {
-              dataItem.children = [];
-              wrapper.forEach((item) => {
-                dataItem.children = [...dataItem.children, ...item.children];
-              });
-            }
-          }
-        });
-      }
       this.setData({
         parserData: data,
       });
