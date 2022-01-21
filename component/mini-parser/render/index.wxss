@@ -83,6 +83,7 @@
   padding-left: 0.5em;
 }
 
+.mini-parser-origin-ol .mini-parser-origin-li,
 .mini-parser-origin-ul .mini-parser-origin-li {
   display: flex;
   align-items: baseline;
@@ -108,5 +109,4 @@
   content: counter(xcounter) '.';
   counter-increment: xcounter;
   margin-right: 0.5em;
-  transform: translateY(2rpx);
 }
