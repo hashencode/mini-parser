@@ -85,8 +85,8 @@
 }
 
 .mini-parser-origin-ol .mini-parser-origin-li:before {
+    min-width: 1.2em;
     flex-shrink: 0;
     content: counter(xcounter) '.';
     counter-increment: xcounter;
-    margin-right: 0.5em;
 }
