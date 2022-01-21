@@ -38,6 +38,7 @@ npm install mini-program-parser
    ```html
    <mini-parser html="{{htmlStr}}" config="{{config}}"></mini-parser>
    ```
+5. 小程序代码示例片段：https://developers.weixin.qq.com/s/3BHREtmN7xwn
 
 ## ⚙️ 配置项
 

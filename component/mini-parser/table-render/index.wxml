@@ -1,0 +1,17 @@
+<view class="mini-parser-table {{parserData.attrs.class}}" style="{{item.attrs.style}}">
+    <view wx:for="{{parserData.children}}"
+          wx:for-item="tr"
+          wx:key="id"
+          class="mini-parser-tr {{tr.attrs.class}}"
+          style="{{tr.attrs.style}}">
+        <view wx:for="{{tr.children}}"
+              wx:for-item="td"
+              wx:key="id"
+              class="mini-parser-td {{td.attrs.class}}"
+              style="{{td.attrs.style}}">
+            <render wx:if="{{td.children}}" parsedData="{{td.children}}"></render>
+        </view>
+    </view>
+</view>
+
+
