@@ -106,6 +106,7 @@
 }
 
 .mini-parser-origin-ol .mini-parser-origin-li:before {
+  flex-shrink: 0;
   content: counter(xcounter) '.';
   counter-increment: xcounter;
   margin-right: 0.5em;
