@@ -15,6 +15,9 @@ Component({
   ready() {
     this.init();
   },
+  detached(){
+    this.stopTimer();
+  },
   observers: {
     // 适应异步请求富文本数据
     html() {
@@ -38,6 +41,13 @@ Component({
         }
       }
     },
+    stopTimer(){
+      if(this.queryTimer){
+        clearInterval(this.queryTimer);
+        this.queryTimer = null;
+        this.queryCount = 0;
+      }
+    },
     getContainerWidth() {
       if (this.queryTimer) {
         if (this.queryCount < 10) {
@@ -47,8 +57,7 @@ Component({
               .select('.mini-parser')
               .boundingClientRect(res => {
                 if (res && res.width > 0) {
-                  clearInterval(this.queryTimer);
-                  this.queryTimer = null;
+                  this.stopTimer();
                   this.setData({
                     containerWidth: res.width,
                     renderVisible: true,
@@ -60,7 +69,7 @@ Component({
               .exec();
         } else {
           // 找不到外层元素时，将自适应设置为false
-          clearInterval(this.queryTimer);
+          this.stopTimer();
           this.setData({
             config: { ...this.data.config, adaptive: false },
             renderVisible: true,
