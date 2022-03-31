@@ -18,13 +18,6 @@ const blockElementString =
   "address,article,aside,blockquote,dd,div,dl,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ol,p,pre,section,table,ul";
 export const blockElements = blockElementString.split(",");
 
-// 默认元素转换对应表
-export const defaultTransMap = {
-  img: "image",
-  video: "video",
-  a: "link",
-};
-
 // 起始标签正则
 export const startElementRegexp =
   /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/;
