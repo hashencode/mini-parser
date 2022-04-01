@@ -23,7 +23,6 @@ Component({
           parserData.children = [...parserData.children, ...item.children];
         });
       }
-      console.log(parserData);
       this.setData({
         parserData,
       });
