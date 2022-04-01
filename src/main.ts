@@ -294,13 +294,17 @@ class MiniParser {
     if (children.length <= 0) return false;
     // 执行递归
     const hasImage = !!children.find((item) => this.transToBlock(item));
-    // 如果存在子元素且当前元素非块级元素时
-    if (hasImage && display !== "block") {
+    // 如果存在图片子元素且当前元素是未设置宽度的非块级元素时
+    if (
+      hasImage &&
+      display !== "block" &&
+      attrs &&
+      attrs.styleObj &&
+      !("width" in attrs.styleObj)
+    ) {
       skeleton.display = "block";
-      if (attrs && attrs.styleObj && attrs.styleObj.display) {
-        attrs.styleObj.display = "block";
-        attrs.style += ";display:block";
-      }
+      attrs.styleObj.display = "block";
+      attrs.style += ";display:block";
     }
     return hasImage;
   }

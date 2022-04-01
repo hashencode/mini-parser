@@ -128,7 +128,7 @@ exports.domLevel = {
           id: "0_0_span",
           name: "span",
           attrs: {},
-          display: "block",
+          display: "inline",
           type: "default",
           children: [
             {
