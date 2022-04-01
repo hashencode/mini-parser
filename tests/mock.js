@@ -80,9 +80,6 @@ exports.config = {
         content: (data) => data.replace(/123/g, "一二三"),
       },
     },
-    transMap: {
-      br: "rich-text",
-    },
   },
   except: [
     {
@@ -131,7 +128,7 @@ exports.domLevel = {
           id: "0_0_span",
           name: "span",
           attrs: {},
-          display: "inline",
+          display: "block",
           type: "default",
           children: [
             {
