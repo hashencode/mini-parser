@@ -20,8 +20,9 @@ import {
 } from "./types";
 
 class MiniParser {
-  private readonly config;
-  private readonly extraData;
+  private readonly config; // 配置信息
+  private readonly extraData; // 额外参数
+  private isPureText: boolean | undefined; // 纯文本无图片
 
   constructor({ html, config, extraData }: ConstructorType) {
     this.config = config || {};
@@ -32,6 +33,7 @@ class MiniParser {
   // 处理步骤
   steps(html: string): any {
     const cleanHtml = this.cleanHtml(html);
+    this.isPureText = !/<\s*img/g.test(cleanHtml);
     const jsonData = this.htmlToJson(cleanHtml);
     return this.jsonToSkeleton(jsonData);
   }
@@ -248,7 +250,7 @@ class MiniParser {
         // 判断是否是自闭合标签
         const selfClosing = this.isSelfClosingElement(str, name);
         // 获取属性
-        const attrs = this.formatAttributes(attrString, name);
+        const attrs = this.formatAttributes(attrString.replace(/ /g, ""), name);
         // 配置display属性
         let display = blockElements.includes(name) ? "block" : "inline";
         const styleObj = attrs.styleObj as ObjType;
@@ -284,9 +286,40 @@ class MiniParser {
     return jsonData;
   }
 
+  // 当子元素含有图片标签时，将所有父级元素设置为块级元素
+  transToBlock(skeleton: JsonDataType): boolean {
+    const { name, display, attrs, children = [] } = skeleton;
+    // 当前为图片标签或无子元素则返回
+    if (name === "img") return true;
+    if (children.length <= 0) return false;
+    // 执行递归
+    const hasImage = !!children.find((item) => this.transToBlock(item));
+    // 如果存在子元素且当前元素非块级元素时
+    if (hasImage && display !== "block") {
+      skeleton.display = "block";
+      if (attrs && attrs.styleObj && attrs.styleObj.display) {
+        attrs.styleObj.display = "block";
+        attrs.style += ";display:block";
+      }
+    }
+    return hasImage;
+  }
+
+  // 自动修复常见问题
+  autoFixer(skeleton: JsonDataType[]) {
+    // 当没有图片元素时不执行
+    if (!this.isPureText) {
+      skeleton.forEach((skeletonItem) => {
+        // 解决非块级元素内含有图片元素时图片宽度为0的问题
+        this.transToBlock(skeletonItem);
+      });
+    }
+  }
+
   // 结构数据生成器
   skeletonGenerator(jsonData: JsonDataTypeDev[], parentId = 0): JsonDataType[] {
     if (jsonData.length <= 0) return [];
+    const { autoFix = true } = this.config;
     let count = 0;
     const skeleton = [];
     while (count < jsonData.length) {
@@ -318,6 +351,10 @@ class MiniParser {
         skeleton.push({ id, ...current, type: newType });
         count++;
       }
+    }
+
+    if (autoFix) {
+      this.autoFixer(skeleton);
     }
 
     return skeleton;

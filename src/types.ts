@@ -5,14 +5,16 @@ export interface extraDataType {
 
 // 构造函数参数类型
 export interface ConstructorType {
-  config?: ConfigType;
-  extraData?: extraDataType;
-  html: string;
+  config?: ConfigType; // 配置参数
+  extraData?: extraDataType; // 额外参数，包含外部容器宽度（containerWidth）
+  html: string; // 富文本字符串
 }
 
 // 元素属性类型
 export interface AttrsMapType {
-  [key: string]: string | boolean | object | ObjType;
+  style?: string;
+  styleObj?: ObjType;
+  [key: string]: any;
 }
 
 // 默认对象类型
@@ -38,8 +40,8 @@ export type JsonDataType = {
 
 // 配置项
 export type ConfigType = {
-  adaptive?: boolean; // 自适应
+  adaptive?: boolean; // 图片自适应
+  autoFix?: boolean; // 自动修复常见问题
   format?: { [key: string]: { [key: string]: any } }; // 属性格式化
   ignoredElement?: string[]; // 忽略解析的元素类型
-  transMap?: ObjType; // 元素转换对应表
 };

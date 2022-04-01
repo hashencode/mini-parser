@@ -38,22 +38,33 @@ npm install mini-program-parser
    ```html
    <mini-parser html="{{htmlStr}}" config="{{config}}"></mini-parser>
    ```
+
 5. 小程序代码示例片段：https://developers.weixin.qq.com/s/3BHREtmN7xwn
 
 ## ⚙️ 配置项
 
-| 属性                   | 说明        | 类型                        | 默认值                   |
-| -------------------- | --------- | ------------------------- | --------------------- |
-| adaptive             | 宽度自适应模式   | boolean                   | true                  |
-| format               | 属性格式化     | -                         | -                     |
-| ignoredElement       | 无需解析的元素类型 | string[]                  | defaultIgnoreElements |
+| 属性             | 说明        | 类型       | 默认值                   |
+| -------------- | --------- | -------- | --------------------- |
+| adaptive       | 宽度自适应模式   | boolean  | true                  |
+| autoFix        | 自动修复常见问题  | boolean  | true                  |
+| format         | 属性格式化     | -        | -                     |
+| ignoredElement | 无需解析的元素类型 | string[] | defaultIgnoreElements |
 
 ### adaptive
 
 宽度自适应模式
 
-默认开启，当元素的宽度超过外层容器的宽度时，脚本会自动修改其宽度为容器宽度，并等比缩放其高度（如果有设置的话）
-该模式会影响解析速度，若解析富文本内没有图片，可关闭该模式以加快解析和渲染速度
+默认开启，当元素的宽度超过外层容器的宽度时，脚本会自动修改其宽度为容器宽度，并等比缩放其高度（如果有设置的话），注意：该模式会影响解析速度
+
+### autoFix
+
+自动修复常见问题
+
+自动修复的问题如下：
+
+- a 标签和 section 标签内存在 img 标签时，会在 style 内自动追加`display:block`
+  
+  此项当富文本内含有图片标签时开启
 
 ### format
 
@@ -89,35 +100,3 @@ ignoredElement:[...MiniParser.defaultIgnoreElements, 'iframe']
 // or
 ignoredElement:['iframe', 'table', '...']
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
