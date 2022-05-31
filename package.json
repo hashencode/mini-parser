@@ -1,6 +1,6 @@
 {
   "name": "mini-program-parser",
-  "version": "0.3.9",
+  "version": "0.3.11",
   "scripts": {
     "dev": "rollup -c ./rollup.dev.config.js --watch",
     "build": "rollup -c ./rollup.build.config.js",

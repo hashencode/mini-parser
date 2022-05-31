@@ -23,10 +23,12 @@ class MiniParser {
   private readonly config; // 配置信息
   private readonly extraData; // 额外参数
   private isPureText: boolean | undefined; // 纯文本无图片
+  private memoryLeakTimer: null | number; // 防止内存溢出
 
   constructor({ html, config, extraData }: ConstructorType) {
     this.config = config || {};
     this.extraData = extraData || defaultExtraData;
+    this.memoryLeakTimer = null;
     return html ? this.steps(html) : [];
   }
 
@@ -205,8 +207,24 @@ class MiniParser {
   // 解析html字符串并转为json结构
   htmlToJson(decodedHtml: string) {
     const jsonData = [];
+    // 记录当前时间戳
+    this.memoryLeakTimer = Date.now();
+    // html字符串历史
+    let prevDecodedHtml = "";
 
     while (decodedHtml) {
+      // 如果处理后的html字符串和上一次的html字符串一致，则说明进入了死循环
+      if (decodedHtml === prevDecodedHtml) {
+        console.error("invalid html string");
+        return [];
+      }else{
+        prevDecodedHtml = decodedHtml;
+      }
+      // 处理超时，直接
+      if (Date.now() - this.memoryLeakTimer >= 5000) {
+        console.error("processing timeout");
+        return [];
+      }
       // 如果是结束标签
       if (decodedHtml.indexOf("</") === 0) {
         const match = decodedHtml.match(endElementRegexp);
