@@ -80,7 +80,7 @@ format: {
         /* 重写图片ID */
         id: "overwrite-id",
         /* 点击事件回调函数名 */
-        tapEvent: "handleTap"
+        bindtap: "handleTap"
     },
     text: {
         /* 修改文本 */
@@ -88,6 +88,16 @@ format: {
     },
 }
 ```
+
+需要注意的是，增加一个新属性的时候，需要在 render 文件中添加对应的输出，否则新属性不会生效。
+
+以上面`bindtap`事件为例，render 文件需要做如下修改：
+
+```html
+<img src="{{item.attrs.src}}" bind:tap="{{ item.attrs.bindtap }}" />
+```
+
+
 
 ### ignoredElement
 
